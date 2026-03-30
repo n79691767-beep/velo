@@ -41,47 +41,7 @@
             flex-direction: column;
         }
 
-        /* --- Mobile Bottom Nav --- */
-        .mobile-nav {
-            display: none;
-            background: var(--surface);
-            border-top: 1px solid var(--border);
-            height: 56px;
-            flex-shrink: 0;
-            z-index: 200;
-        }
-        .mobile-nav-inner {
-            display: flex;
-            height: 100%;
-        }
-        .mobile-tab {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 3px;
-            background: transparent;
-            border: none;
-            color: var(--text-dim);
-            font-size: 9px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .mobile-tab.active { color: var(--gold); }
-        .mobile-tab svg {
-            width: 20px; height: 20px;
-            stroke: currentColor; fill: none;
-            stroke-width: 1.8;
-            stroke-linecap: round; stroke-linejoin: round;
-        }
-
-        @media (max-width: 768px) {
-            .mobile-nav { display: flex; }
-
+        
             nav { height: 52px; padding: 0 16px; }
             .logo { font-size: 20px; letter-spacing: 2px; }
             .logo span { display: none; }
@@ -395,6 +355,70 @@
             display: none;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
         }
+
+        /* ── Mobile Responsive ────────────────────────────────────────────── */
+        @media (max-width: 768px) {
+
+            /* Body scrolls on mobile */
+            body {
+                height: auto;
+                min-height: 100vh;
+                overflow-y: auto;
+                overflow-x: hidden;
+            }
+
+            /* Nav */
+            nav {
+                height: 52px;
+                padding: 0 14px;
+                position: sticky;
+                top: 0;
+                z-index: 100;
+            }
+            .logo { font-size: 20px; letter-spacing: 2px; }
+            .logo span { display: none; }
+            .vault-display { padding: 7px 12px; }
+            .vault-amt { font-size: 14px; }
+            .vault-label { font-size: 8px; }
+
+            /* Stack chart above panel */
+            .main {
+                flex-direction: column;
+                overflow: visible;
+                height: auto;
+            }
+
+            /* Chart: fixed height strip at top */
+            .chart-area {
+                width: 100%;
+                height: 260px;
+                flex: none;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+
+            /* Sidebar becomes full-width scrollable panel */
+            .sidebar {
+                width: 100%;
+                flex: none;
+                overflow-y: visible;
+                padding: 12px;
+            }
+
+            /* Sections */
+            .section { padding: 14px; margin-bottom: 12px; }
+            .section-h { font-size: 9px; margin-bottom: 14px; }
+
+            /* Buttons & inputs */
+            .btn { padding: 15px; font-size: 12px; }
+            input { padding: 13px; font-size: 15px; }
+
+            /* QR code */
+            .qr-wrapper { width: 140px; }
+
+            /* Terms modal */
+            .terms-content { padding: 20px; }
+        }
     </style>
 </head>
 
@@ -416,7 +440,7 @@
                 allowfullscreen></iframe>
         </div>
 
-        <div class="sidebar mobile-active" id="panel-sidebar">
+        <div class="sidebar" id="panel-sidebar">
             <div class="section">
                 <div class="section-h">Market Execution <span>10x Leverage</span></div>
                 <div class="input-group">
@@ -520,23 +544,6 @@
         </div>
     </div>
 
-
-    <!-- Mobile Bottom Nav -->
-    <div class="mobile-nav">
-        <div class="mobile-nav-inner">
-            <button class="mobile-tab" id="mnav-chart" onclick="showMobilePanel('chart')">
-                <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-                Chart
-            </button>
-            <button class="mobile-tab active" id="mnav-trade" onclick="showMobilePanel('trade')">
-                <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                Trade
-            </button>
-            <button class="mobile-tab" id="mnav-fund" onclick="showMobilePanel('fund')">
-                <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-                Fund
-            </button>
-        </div>
     </div>
 
     <div id="toast" class="toast"></div>
@@ -684,30 +691,6 @@
             window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`);
         }
 
-
-        // ── Mobile Panel Switcher ─────────────────────────────────────────────
-        function showMobilePanel(panel) {
-            const chart   = document.getElementById('chart-panel');
-            const sidebar = document.getElementById('panel-sidebar');
-            const mTabs   = document.querySelectorAll('.mobile-tab');
-            mTabs.forEach(t => t.classList.remove('active'));
-
-            if (panel === 'chart') {
-                chart.classList.add('mobile-active');
-                sidebar.classList.remove('mobile-active');
-                document.getElementById('mnav-chart').classList.add('active');
-            } else if (panel === 'trade') {
-                chart.classList.remove('mobile-active');
-                sidebar.classList.add('mobile-active');
-                document.getElementById('mnav-trade').classList.add('active');
-                document.querySelector('#panel-sidebar .section').scrollIntoView({ block: 'start', behavior: 'smooth' });
-            } else if (panel === 'fund') {
-                chart.classList.remove('mobile-active');
-                sidebar.classList.add('mobile-active');
-                document.getElementById('mnav-fund').classList.add('active');
-                const sections = document.querySelectorAll('#panel-sidebar .section');
-                if (sections[1]) sections[1].scrollIntoView({ block: 'start', behavior: 'smooth' });
-            }
         }
 
         // ── 5. Init ───────────────────────────────────────────────────────────
