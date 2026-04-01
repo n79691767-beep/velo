@@ -1,667 +1,858 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>VELO | Private Terminal</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VELO | Private Terminal</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&display=swap"
+        rel="stylesheet" />
 
-  <style>
-    :root {
-      --bg:       #050608;
-      --surface:  #0a0c10;
-      --card:     #11141b;
-      --gold:     #c9a84c;
-      --gold-dim: #7a6228;
-      --text:     #ccd6e0;
-      --text-dim: #5c6d7e;
-      --border:   #1e2530;
-      --green:    #1db96a;
-      --red:      #d94040;
-      --info:     #4c82c9;
-      --nav-h:    60px;
-      --ticker-h: 38px;
-    }
+    <style>
+        :root {
+            --bg: #050608;
+            --surface: #0a0c10;
+            --card: #11141b;
+            --gold: #c9a84c;
+            --gold-dim: #7a6228;
+            --text: #ccd6e0;
+            --text-dim: #5c6d7e;
+            --border: #1e2530;
+            --green: #1db96a;
+            --red: #d94040;
+            --info: #4c82c9;
+            --nav-h: 60px;
+            --ticker-h: 38px;
+        }
 
-    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; outline:none; }
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            outline: none;
+        }
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow-x: hidden;
-    }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
 
-    /* ── NAV ────────────────────────────────────────────── */
-    nav {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 0 20px;
-      height: var(--nav-h);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 200;
-      flex-shrink: 0;
-    }
+        /* ── NAV ────────────────────────────────────────────── */
+        nav {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0 20px;
+            height: var(--nav-h);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            flex-shrink: 0;
+        }
 
-    .logo {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 24px;
-      letter-spacing: 3px;
-      color: var(--gold);
-      line-height: 1;
-    }
-    .logo-sub {
-      font-size: 9px;
-      color: var(--text-dim);
-      letter-spacing: 1px;
-      font-family: 'DM Mono', monospace;
-      display: block;
-    }
+        .logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 24px;
+            letter-spacing: 3px;
+            color: var(--gold);
+            line-height: 1;
+        }
 
-    .vault-display {
-      background: var(--card);
-      border: 1px solid var(--border);
-      padding: 7px 14px;
-      border-radius: 6px;
-      text-align: right;
-    }
-    .vault-label { font-size: 8px; text-transform: uppercase; color: var(--text-dim); letter-spacing: 1px; }
-    .vault-amt   { font-family: 'DM Mono', monospace; color: var(--gold); font-size: 16px; font-weight: 500; }
+        .logo-sub {
+            font-size: 9px;
+            color: var(--text-dim);
+            letter-spacing: 1px;
+            font-family: 'DM Mono', monospace;
+            display: block;
+        }
 
-    /* ── PRICE TICKER BAR ────────────────────────────────── */
-    .ticker-bar {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      height: var(--ticker-h);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 0 16px;
-      flex-shrink: 0;
-    }
-    .ticker-pair  { font-size: 11px; font-weight: 700; color: var(--text-dim); letter-spacing: 1px; font-family: 'DM Mono', monospace; }
-    .ticker-price { font-size: 18px; font-weight: 700; font-family: 'DM Mono', monospace; color: var(--text); transition: color 0.3s; }
-    .ticker-price.up   { color: var(--green); }
-    .ticker-price.down { color: var(--red); }
-    .ticker-change {
-      font-size: 11px;
-      font-family: 'DM Mono', monospace;
-      padding: 2px 7px;
-      border-radius: 3px;
-      font-weight: 600;
-    }
-    .ticker-change.pos { background: rgba(29,185,106,0.12); color: var(--green); }
-    .ticker-change.neg { background: rgba(217,64,64,0.12);  color: var(--red); }
-    .ticker-extras { margin-left: auto; display: flex; gap: 14px; }
-    .ticker-stat   { font-size: 10px; font-family: 'DM Mono', monospace; color: var(--text-dim); }
-    .ticker-stat span { color: var(--text); }
-    .ticker-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: var(--green);
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      0%,100% { opacity:1; }
-      50%      { opacity:.3; }
-    }
+        .vault-display {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 7px 14px;
+            border-radius: 6px;
+            text-align: right;
+        }
 
-    /* ── MAIN LAYOUT ─────────────────────────────────────── */
-    .main {
-      flex: 1;
-      display: flex;
-      overflow: hidden; /* desktop: locked height */
-    }
+        .vault-label {
+            font-size: 8px;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            letter-spacing: 1px;
+        }
 
-    /* chart takes remaining width on desktop */
-    .chart-area {
-      flex: 1;
-      min-width: 0;
-      background: #000;
-      border-right: 1px solid var(--border);
-      position: relative;
-    }
-    .chart-area iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      display: block;
-    }
+        .vault-amt {
+            font-family: 'DM Mono', monospace;
+            color: var(--gold);
+            font-size: 16px;
+            font-weight: 500;
+        }
 
-    /* sidebar fixed width on desktop */
-    .sidebar {
-      width: 360px;
-      flex-shrink: 0;
-      background: var(--surface);
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-      padding: 14px;
-      scrollbar-width: none;
-      gap: 12px;
-    }
-    .sidebar::-webkit-scrollbar { display: none; }
+        /* ── PRICE TICKER BAR ────────────────────────────────── */
+        .ticker-bar {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            height: var(--ticker-h);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0 16px;
+            flex-shrink: 0;
+        }
 
-    /* ── SECTION CARDS ───────────────────────────────────── */
-    .section {
-      padding: 16px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: var(--card);
-    }
-    .section-h {
-      font-size: 9px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: var(--text-dim);
-      margin-bottom: 14px;
-      font-weight: 700;
-      display: flex;
-      justify-content: space-between;
-    }
+        .ticker-pair {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-dim);
+            letter-spacing: 1px;
+            font-family: 'DM Mono', monospace;
+        }
 
-    /* ── TABS ────────────────────────────────────────────── */
-    .tabs {
-      display: flex;
-      background: #000;
-      padding: 3px;
-      border-radius: 6px;
-      margin-bottom: 16px;
-      border: 1px solid var(--border);
-    }
-    .tab {
-      flex: 1;
-      padding: 9px;
-      border: none;
-      background: transparent;
-      color: var(--text-dim);
-      font-size: 11px;
-      cursor: pointer;
-      border-radius: 4px;
-      font-weight: 600;
-      transition: .2s;
-    }
-    .tab.active { background: var(--border); color: var(--gold); }
+        .ticker-price {
+            font-size: 18px;
+            font-weight: 700;
+            font-family: 'DM Mono', monospace;
+            color: var(--text);
+            transition: color 0.3s;
+        }
 
-    /* ── INPUTS ──────────────────────────────────────────── */
-    .input-group  { margin-bottom: 12px; }
-    .input-label  { font-size: 9px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 6px; display: block; letter-spacing: 1px; }
-    input {
-      width: 100%;
-      background: #050608;
-      border: 1px solid var(--border);
-      padding: 12px;
-      color: #fff;
-      font-family: 'DM Mono', monospace;
-      border-radius: 6px;
-      font-size: 14px;
-      transition: border-color .2s;
-    }
-    input:focus { border-color: var(--gold-dim); }
+        .ticker-price.up {
+            color: var(--green);
+        }
 
-    /* ── BUTTONS ─────────────────────────────────────────── */
-    .btn {
-      width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 6px;
-      font-weight: 700;
-      cursor: pointer;
-      text-transform: uppercase;
-      font-size: 11px;
-      letter-spacing: 1px;
-      transition: .2s;
-    }
-    .btn:hover  { filter: brightness(1.1); }
-    .btn:active { transform: scale(.98); }
-    .btn-green  { background: var(--green); color: #fff; }
-    .btn-gold   { background: var(--gold); color: #000; }
-    .btn-red    { background: var(--red); color: #fff; }
-    .btn-ghost  { background: #1c2028; color: var(--text); }
-    .trade-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .ticker-price.down {
+            color: var(--red);
+        }
 
-    /* ── STAT ROWS ───────────────────────────────────────── */
-    .stat-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px 0;
-      font-size: 12px;
-      border-bottom: 1px solid rgba(255,255,255,.05);
-    }
-    .stat-val { font-family: 'DM Mono', monospace; font-weight: 500; }
+        .ticker-change {
+            font-size: 11px;
+            font-family: 'DM Mono', monospace;
+            padding: 2px 7px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
 
-    /* ── DEPOSIT WIZARD ──────────────────────────────────── */
-    .wizard-step { animation: fadeIn .25s ease; }
-    @keyframes fadeIn {
-      from { opacity:0; transform: translateY(4px); }
-      to   { opacity:1; transform: translateY(0); }
-    }
-    .qr-wrapper {
-      background: #fff;
-      padding: 10px;
-      border-radius: 8px;
-      width: 160px;
-      margin: 0 auto 16px;
-      box-shadow: 0 0 20px rgba(0,0,0,.5);
-    }
-    .qr-wrapper img { width:100%; height:auto; display:block; }
-    .address-box {
-      background: #000;
-      border: 1px dashed var(--gold-dim);
-      padding: 12px;
-      border-radius: 6px;
-      text-align: center;
-      cursor: pointer;
-      margin-bottom: 10px;
-      transition: border-color .2s;
-    }
-    .address-box:hover { border-color: var(--gold); }
-    .address-text { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gold); word-break: break-all; }
+        .ticker-change.pos {
+            background: rgba(29, 185, 106, 0.12);
+            color: var(--green);
+        }
 
-    /* ── MODAL ───────────────────────────────────────────── */
-    #terms-modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.95);
-      z-index: 1000;
-      display: none;
-      padding: 40px 20px;
-      overflow-y: auto;
-    }
-    .terms-content {
-      max-width: 480px;
-      margin: 0 auto;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 28px;
-      border-radius: 8px;
-    }
+        .ticker-change.neg {
+            background: rgba(217, 64, 64, 0.12);
+            color: var(--red);
+        }
 
-    /* ── TOAST ───────────────────────────────────────────── */
-    .toast {
-      position: fixed;
-      bottom: 28px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--gold);
-      color: #000;
-      padding: 11px 22px;
-      border-radius: 4px;
-      font-weight: 700;
-      font-size: 11px;
-      letter-spacing: .5px;
-      z-index: 2000;
-      display: none;
-      box-shadow: 0 10px 40px rgba(0,0,0,.8);
-      white-space: nowrap;
-    }
+        .ticker-extras {
+            margin-left: auto;
+            display: flex;
+            gap: 14px;
+        }
 
-    /* ── INFO NOTICE ─────────────────────────────────────── */
-    .info-box {
-      background: rgba(201,168,76,.07);
-      border: 1px solid var(--gold-dim);
-      border-radius: 6px;
-      padding: 10px 12px;
-      font-size: 10px;
-      color: var(--text-dim);
-      line-height: 1.7;
-      margin-bottom: 12px;
-    }
-    .info-box b { color: var(--text); }
+        .ticker-stat {
+            font-size: 10px;
+            font-family: 'DM Mono', monospace;
+            color: var(--text-dim);
+        }
 
-    /* ── MOBILE RESPONSIVE ───────────────────────────────── */
-    @media (max-width: 768px) {
+        .ticker-stat span {
+            color: var(--text);
+        }
 
-      /* unlock body scroll */
-      body { overflow-x: hidden; overflow-y: auto; }
+        .ticker-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--green);
+            animation: pulse 2s infinite;
+        }
 
-      /* main stacks vertically, no overflow-hidden */
-      .main {
-        flex-direction: column;
-        overflow: visible;
-        height: auto;
-      }
+        @keyframes pulse {
 
-      /* chart: fixed aspect-ratio block */
-      .chart-area {
-        width: 100%;
-        height: 52vw;       /* roughly 16:9 ish on mobile */
-        min-height: 240px;
-        max-height: 340px;
-        border-right: none;
-        border-bottom: 1px solid var(--border);
-        flex: none;
-      }
+            0%,
+            100% {
+                opacity: 1;
+            }
 
-      /* sidebar: full width, no fixed height */
-      .sidebar {
-        width: 100%;
-        overflow-y: visible;
-        padding: 12px;
-        gap: 10px;
-      }
+            50% {
+                opacity: .3;
+            }
+        }
 
-      /* ticker: hide the less-important extras on very small screens */
-      .ticker-extras { display: none; }
+        /* ── MAIN LAYOUT ─────────────────────────────────────── */
+        .main {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            /* desktop: locked height */
+        }
 
-      .vault-amt { font-size: 14px; }
-      .logo      { font-size: 20px; }
-    }
+        /* chart takes remaining width on desktop */
+        .chart-area {
+            flex: 1;
+            min-width: 0;
+            background: #000;
+            border-right: 1px solid var(--border);
+            position: relative;
+        }
 
-    @media (max-width: 400px) {
-      .ticker-change { display: none; }
-    }
+        .chart-area iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
 
-    /* ── DESKTOP BODY LOCK ───────────────────────────────── */
-    @media (min-width: 769px) {
-      body {
-        height: 100vh;
-        overflow: hidden;
-      }
-      .main {
-        height: calc(100vh - var(--nav-h) - var(--ticker-h));
-        overflow: hidden;
-      }
-    }
-  </style>
+        /* sidebar fixed width on desktop */
+        .sidebar {
+            width: 360px;
+            flex-shrink: 0;
+            background: var(--surface);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 14px;
+            scrollbar-width: none;
+            gap: 12px;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* ── SECTION CARDS ───────────────────────────────────── */
+        .section {
+            padding: 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--card);
+        }
+
+        .section-h {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+            margin-bottom: 14px;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* ── TABS ────────────────────────────────────────────── */
+        .tabs {
+            display: flex;
+            background: #000;
+            padding: 3px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 9px;
+            border: none;
+            background: transparent;
+            color: var(--text-dim);
+            font-size: 11px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: .2s;
+        }
+
+        .tab.active {
+            background: var(--border);
+            color: var(--gold);
+        }
+
+        /* ── INPUTS ──────────────────────────────────────────── */
+        .input-group {
+            margin-bottom: 12px;
+        }
+
+        .input-label {
+            font-size: 9px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            display: block;
+            letter-spacing: 1px;
+        }
+
+        input {
+            width: 100%;
+            background: #050608;
+            border: 1px solid var(--border);
+            padding: 12px;
+            color: #fff;
+            font-family: 'DM Mono', monospace;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color .2s;
+        }
+
+        input:focus {
+            border-color: var(--gold-dim);
+        }
+
+        /* ── BUTTONS ─────────────────────────────────────────── */
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 1px;
+            transition: .2s;
+        }
+
+        .btn:hover {
+            filter: brightness(1.1);
+        }
+
+        .btn:active {
+            transform: scale(.98);
+        }
+
+        .btn-green {
+            background: var(--green);
+            color: #fff;
+        }
+
+        .btn-gold {
+            background: var(--gold);
+            color: #000;
+        }
+
+        .btn-red {
+            background: var(--red);
+            color: #fff;
+        }
+
+        .btn-ghost {
+            background: #1c2028;
+            color: var(--text);
+        }
+
+        .trade-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        /* ── STAT ROWS ───────────────────────────────────────── */
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            font-size: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, .05);
+        }
+
+        .stat-val {
+            font-family: 'DM Mono', monospace;
+            font-weight: 500;
+        }
+
+        /* ── DEPOSIT WIZARD ──────────────────────────────────── */
+        .wizard-step {
+            animation: fadeIn .25s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(4px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .qr-wrapper {
+            background: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            width: 160px;
+            margin: 0 auto 16px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, .5);
+        }
+
+        .qr-wrapper img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .address-box {
+            background: #000;
+            border: 1px dashed var(--gold-dim);
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: border-color .2s;
+        }
+
+        .address-box:hover {
+            border-color: var(--gold);
+        }
+
+        .address-text {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            color: var(--gold);
+            word-break: break-all;
+        }
+
+        /* ── MODAL ───────────────────────────────────────────── */
+        #terms-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .95);
+            z-index: 1000;
+            display: none;
+            padding: 40px 20px;
+            overflow-y: auto;
+        }
+
+        .terms-content {
+            max-width: 480px;
+            margin: 0 auto;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 28px;
+            border-radius: 8px;
+        }
+
+        /* ── TOAST ───────────────────────────────────────────── */
+        .toast {
+            position: fixed;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gold);
+            color: #000;
+            padding: 11px 22px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 11px;
+            letter-spacing: .5px;
+            z-index: 2000;
+            display: none;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, .8);
+            white-space: nowrap;
+        }
+
+        /* ── INFO NOTICE ─────────────────────────────────────── */
+        .info-box {
+            background: rgba(201, 168, 76, .07);
+            border: 1px solid var(--gold-dim);
+            border-radius: 6px;
+            padding: 10px 12px;
+            font-size: 10px;
+            color: var(--text-dim);
+            line-height: 1.7;
+            margin-bottom: 12px;
+        }
+
+        .info-box b {
+            color: var(--text);
+        }
+
+        /* ── MOBILE RESPONSIVE ───────────────────────────────── */
+        @media (max-width: 768px) {
+
+            /* unlock body scroll */
+            body {
+                overflow-x: hidden;
+                overflow-y: auto;
+            }
+
+            /* main stacks vertically, no overflow-hidden */
+            .main {
+                flex-direction: column;
+                overflow: visible;
+                height: auto;
+            }
+
+            /* chart: fixed aspect-ratio block */
+            .chart-area {
+                width: 100%;
+                height: 52vw;
+                /* roughly 16:9 ish on mobile */
+                min-height: 240px;
+                max-height: 340px;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                flex: none;
+            }
+
+            /* sidebar: full width, no fixed height */
+            .sidebar {
+                width: 100%;
+                overflow-y: visible;
+                padding: 12px;
+                gap: 10px;
+            }
+
+            /* ticker: hide the less-important extras on very small screens */
+            .ticker-extras {
+                display: none;
+            }
+
+            .vault-amt {
+                font-size: 14px;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .ticker-change {
+                display: none;
+            }
+        }
+
+        /* ── DESKTOP BODY LOCK ───────────────────────────────── */
+        @media (min-width: 769px) {
+            body {
+                height: 100vh;
+                overflow: hidden;
+            }
+
+            .main {
+                height: calc(100vh - var(--nav-h) - var(--ticker-h));
+                overflow: hidden;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-  <!-- NAV -->
-  <nav>
-    <div>
-      <div class="logo">VELO</div>
-      <span class="logo-sub">CRYPTO TRADING PLATFORM</span>
-    </div>
-    <div class="vault-display">
-      <div class="vault-label">Live Vault Balance</div>
-      <div class="vault-amt">$<span id="display-balance">0.00</span></div>
-    </div>
-  </nav>
-
-  <!-- PRICE TICKER BAR -->
-  <div class="ticker-bar">
-    <div class="ticker-dot"></div>
-    <span class="ticker-pair">BTC/USDT</span>
-    <span class="ticker-price" id="ticker-price">—</span>
-    <span class="ticker-change" id="ticker-change"></span>
-    <div class="ticker-extras">
-      <span class="ticker-stat">24H HIGH <span id="ticker-high">—</span></span>
-      <span class="ticker-stat">24H LOW <span id="ticker-low">—</span></span>
-      <span class="ticker-stat">VOL <span id="ticker-vol">—</span></span>
-    </div>
-  </div>
-
-  <!-- MAIN -->
-  <div class="main">
-
-    <!-- CHART -->
-    <div class="chart-area">
-      <iframe
-        src="https://s.tradingview.com/widgetembed/?symbol=BINANCE%3ABTCUSDT&interval=60&theme=dark&style=1&timezone=Etc%2FUTC&locale=en"
-        loading="lazy"
-        allowfullscreen>
-      </iframe>
-    </div>
-
-    <!-- SIDEBAR -->
-    <div class="sidebar">
-
-      <!-- TRADE PANEL -->
-      <div class="section">
-        <div class="section-h">Market Execution <span style="color:var(--gold)">10× Leverage</span></div>
-        <div class="input-group">
-          <span class="input-label">Trade Margin (USDT)</span>
-          <input type="number" id="trade-amount" placeholder="0.00" min="0"/>
+    <!-- NAV -->
+    <nav>
+        <div>
+            <div class="logo">VELO</div>
+            <span class="logo-sub">CRYPTO TRADING PLATFORM</span>
         </div>
-        <div class="trade-grid">
-          <button class="btn btn-green" onclick="executeTrade('Long')">▲ Buy Long</button>
-          <button class="btn btn-red"   onclick="executeTrade('Short')">▼ Sell Short</button>
+        <div class="vault-display">
+            <div class="vault-label">Live Vault Balance</div>
+            <div class="vault-amt">$<span id="display-balance">0.00</span></div>
         </div>
-      </div>
+    </nav>
 
-      <!-- FUNDING -->
-      <div class="section">
-        <div class="section-h">Funding & Payouts</div>
-        <div class="tabs">
-          <button class="tab active" id="tab-dep-btn"  onclick="switchTab('deposit')">Add Funds</button>
-          <button class="tab"        id="tab-with-btn" onclick="switchTab('withdraw')">Withdraw</button>
+    <!-- PRICE TICKER BAR -->
+    <div class="ticker-bar">
+        <div class="ticker-dot"></div>
+        <span class="ticker-pair">BTC/USDT</span>
+        <span class="ticker-price" id="ticker-price">—</span>
+        <span class="ticker-change" id="ticker-change"></span>
+        <div class="ticker-extras">
+            <span class="ticker-stat">24H HIGH <span id="ticker-high">—</span></span>
+            <span class="ticker-stat">24H LOW <span id="ticker-low">—</span></span>
+            <span class="ticker-stat">VOL <span id="ticker-vol">—</span></span>
+        </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+
+        <!-- CHART -->
+        <div class="chart-area">
+            <iframe
+                src="https://s.tradingview.com/widgetembed/?symbol=BINANCE%3ABTCUSDT&interval=60&theme=dark&style=1&timezone=Etc%2FUTC&locale=en"
+                loading="lazy" allowfullscreen>
+            </iframe>
         </div>
 
-        <!-- DEPOSIT WIZARD -->
-        <div id="view-deposit">
-          <div id="step-1" class="wizard-step">
-            <p style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:6px;">STEP 1 — Send Money</p>
-            <p style="font-size:11px;color:var(--text-dim);margin-bottom:10px;line-height:1.6;">
-              Send <b style="color:var(--text)">USDT</b> from any wallet or exchange to the address below.
-            </p>
-            <div class="info-box">
-              ✔ Use the <b>TRON (TRC20)</b> network — not BEP20, not ERC20<br>
-              ✔ Send <b>USDT only</b> — not TRX, not BTC<br>
-              ✔ Minimum deposit: <b>$10 USDT</b>
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+
+            <!-- TRADE PANEL -->
+            <div class="section">
+                <div class="section-h">Market Execution <span style="color:var(--gold)">10× Leverage</span></div>
+                <div class="input-group">
+                    <span class="input-label">Trade Margin (USDT)</span>
+                    <input type="number" id="trade-amount" placeholder="0.00" min="0" />
+                </div>
+                <div class="trade-grid">
+                    <button class="btn btn-green" onclick="executeTrade('Long')">▲ Buy Long</button>
+                    <button class="btn btn-red" onclick="executeTrade('Short')">▼ Sell Short</button>
+                </div>
             </div>
-            <div class="qr-wrapper">
-              <img src="data:image/jpeg;base64,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" alt="TRC20 QR"/>
-            </div>
-            <div class="address-box" onclick="copyAddr()">
-              <div class="address-text">TWCphpX7xGQ9r5jCiLwcfHeF9skJ8bAZe1</div>
-              <p style="font-size:8px;color:var(--gold);margin-top:4px;font-weight:700;">TAP TO COPY ADDRESS</p>
-            </div>
-            <button class="btn btn-gold" onclick="nextStep(2)">I HAVE SENT THE MONEY →</button>
-          </div>
 
-          <div id="step-2" class="wizard-step" style="display:none;">
-            <p style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:6px;">STEP 2 — How much did you send?</p>
-            <p style="font-size:11px;color:var(--text-dim);margin-bottom:12px;line-height:1.6;">
-              Enter the amount in <b style="color:var(--text)">Kenyan Shillings (KES)</b> that you converted and sent.
-            </p>
-            <input type="number" id="kes-dep" placeholder="e.g. 5000 (KES)" min="0" style="margin-bottom:12px;"/>
-            <div style="display:flex;gap:10px;">
-              <button class="btn btn-ghost" onclick="nextStep(1)">← BACK</button>
-              <button class="btn btn-gold"  onclick="nextStep(3)">CONTINUE →</button>
-            </div>
-          </div>
+            <!-- FUNDING -->
+            <div class="section">
+                <div class="section-h">Funding & Payouts</div>
+                <div class="tabs">
+                    <button class="tab active" id="tab-dep-btn" onclick="switchTab('deposit')">Add Funds</button>
+                    <button class="tab" id="tab-with-btn" onclick="switchTab('withdraw')">Withdraw</button>
+                </div>
 
-          <div id="step-3" class="wizard-step" style="display:none;">
-            <p style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:6px;">STEP 3 — Notify Us</p>
-            <p style="font-size:11px;color:var(--text-dim);margin-bottom:10px;line-height:1.7;">
-              Tap below to alert our team on WhatsApp.<br>
-              Your balance will appear within <b style="color:var(--text)">15–60 minutes</b> once confirmed on TRON.
-            </p>
-            <button class="btn btn-green" onclick="sendAction('DEPOSIT')">NOTIFY US ON WHATSAPP →</button>
-          </div>
+                <!-- DEPOSIT WIZARD -->
+                <div id="view-deposit">
+                    <div id="step-1" class="wizard-step">
+                        <p style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:6px;">STEP 1 — Send
+                            Money</p>
+                        <p style="font-size:11px;color:var(--text-dim);margin-bottom:10px;line-height:1.6;">
+                            Send <b style="color:var(--text)">USDT</b> from any wallet or exchange to the address below.
+                        </p>
+                        <div class="info-box">
+                            ✔ Use the <b>TRON (TRC20)</b> network — not BEP20, not ERC20<br>
+                            ✔ Send <b>USDT only</b> — not TRX, not BTC<br>
+                            ✔ Minimum deposit: <b>$10 USDT</b>
+                        </div>
+                        <div class="qr-wrapper">
+                            <img src="c:\Users\Felix\Downloads\WhatsApp Image 2026-03-30 at 9.13.39 AM.jpeg" />
+                        </div>
+                        <div class="address-box" onclick="copyAddr()">
+                            <div class="address-text">TWCphpX7xGQ9r5jCiLwcfHeF9skJ8bAZe1</div>
+                            <p style="font-size:8px;color:var(--gold);margin-top:4px;font-weight:700;">TAP TO COPY
+                                ADDRESS</p>
+                        </div>
+                        <button class="btn btn-gold" onclick="nextStep(2)">I HAVE SENT THE MONEY →</button>
+                    </div>
+
+                    <div id="step-2" class="wizard-step" style="display:none;">
+                        <p style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:6px;">STEP 2 — How much
+                            did you send?</p>
+                        <p style="font-size:11px;color:var(--text-dim);margin-bottom:12px;line-height:1.6;">
+                            Enter the amount in <b style="color:var(--text)">Kenyan Shillings (KES)</b> that you
+                            converted and sent.
+                        </p>
+                        <input type="number" id="kes-dep" placeholder="e.g. 5000 (KES)" min="0"
+                            style="margin-bottom:12px;" />
+                        <div style="display:flex;gap:10px;">
+                            <button class="btn btn-ghost" onclick="nextStep(1)">← BACK</button>
+                            <button class="btn btn-gold" onclick="nextStep(3)">CONTINUE →</button>
+                        </div>
+                    </div>
+
+                    <div id="step-3" class="wizard-step" style="display:none;">
+                        <p style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:6px;">STEP 3 — Notify
+                            Us</p>
+                        <p style="font-size:11px;color:var(--text-dim);margin-bottom:10px;line-height:1.7;">
+                            Tap below to alert our team on WhatsApp.<br>
+                            Your balance will appear within <b style="color:var(--text)">15–60 minutes</b> once
+                            confirmed on TRON.
+                        </p>
+                        <button class="btn btn-green" onclick="sendAction('DEPOSIT')">NOTIFY US ON WHATSAPP →</button>
+                    </div>
+                </div>
+
+                <!-- WITHDRAW -->
+                <div id="view-withdraw" style="display:none;">
+                    <div class="input-group">
+                        <span class="input-label">Payout Amount (KES)</span>
+                        <input type="number" id="kes-with" placeholder="Minimum 1,000" min="1000" />
+                    </div>
+                    <div class="input-group">
+                        <span class="input-label">Your TRC20 Receiving Address</span>
+                        <input type="text" id="addr-with" placeholder="Must start with 'T'" />
+                    </div>
+                    <button class="btn btn-gold" onclick="sendAction('WITHDRAW')">Request Payout</button>
+                </div>
+            </div>
+
+            <!-- PORTFOLIO STATS -->
+            <div class="section" style="border:none; padding-top:4px;">
+                <div class="stat-row"><span>Open Positions</span><span id="active-count" class="stat-val">0</span></div>
+                <div class="stat-row"><span>Unrealized P&amp;L</span><span id="pnl-val" class="stat-val">$0.00</span>
+                </div>
+                <p style="font-size:10px;color:var(--text-dim);text-align:center;margin-top:16px;text-decoration:underline;cursor:pointer;"
+                    onclick="toggleTerms(true)">Legal Disclosures &amp; Terms</p>
+            </div>
+
+        </div><!-- /sidebar -->
+    </div><!-- /main -->
+
+    <!-- TERMS MODAL -->
+    <div id="terms-modal">
+        <div class="terms-content">
+            <h2 style="font-family:'Bebas Neue';color:var(--gold);margin-bottom:18px;font-size:22px;">Institutional
+                Terms</h2>
+            <div style="font-size:12px;color:var(--text-dim);line-height:1.8;">
+                <p><b>1. Network Policy:</b> VELO operates exclusively on the <b>TRON (TRC20)</b> network. Deposits sent
+                    via ERC20, BEP20, or other chains are non-recoverable.</p><br>
+                <p><b>2. Manual Auditing:</b> All deposits and payouts are audited manually. Credits typically reflect
+                    within 15–60 minutes.</p><br>
+                <p><b>3. Market Risk:</b> Trading involves high leverage (10×). Manage your margin to avoid liquidation.
+                </p><br>
+                <p><b>4. Governing Law:</b> All disputes arising from the use of VELO shall be governed exclusively by
+                    the laws of the <b>Republic of Kenya</b>.</p>
+            </div>
+            <button class="btn btn-gold" style="margin-top:22px;" onclick="toggleTerms(false)">I ACCEPT TERMS</button>
         </div>
-
-        <!-- WITHDRAW -->
-        <div id="view-withdraw" style="display:none;">
-          <div class="input-group">
-            <span class="input-label">Payout Amount (KES)</span>
-            <input type="number" id="kes-with" placeholder="Minimum 1,000" min="1000"/>
-          </div>
-          <div class="input-group">
-            <span class="input-label">Your TRC20 Receiving Address</span>
-            <input type="text" id="addr-with" placeholder="Must start with 'T'"/>
-          </div>
-          <button class="btn btn-gold" onclick="sendAction('WITHDRAW')">Request Payout</button>
-        </div>
-      </div>
-
-      <!-- PORTFOLIO STATS -->
-      <div class="section" style="border:none; padding-top:4px;">
-        <div class="stat-row"><span>Open Positions</span><span id="active-count" class="stat-val">0</span></div>
-        <div class="stat-row"><span>Unrealized P&amp;L</span><span id="pnl-val" class="stat-val">$0.00</span></div>
-        <p style="font-size:10px;color:var(--text-dim);text-align:center;margin-top:16px;text-decoration:underline;cursor:pointer;" onclick="toggleTerms(true)">Legal Disclosures &amp; Terms</p>
-      </div>
-
-    </div><!-- /sidebar -->
-  </div><!-- /main -->
-
-  <!-- TERMS MODAL -->
-  <div id="terms-modal">
-    <div class="terms-content">
-      <h2 style="font-family:'Bebas Neue';color:var(--gold);margin-bottom:18px;font-size:22px;">Institutional Terms</h2>
-      <div style="font-size:12px;color:var(--text-dim);line-height:1.8;">
-        <p><b>1. Network Policy:</b> VELO operates exclusively on the <b>TRON (TRC20)</b> network. Deposits sent via ERC20, BEP20, or other chains are non-recoverable.</p><br>
-        <p><b>2. Manual Auditing:</b> All deposits and payouts are audited manually. Credits typically reflect within 15–60 minutes.</p><br>
-        <p><b>3. Market Risk:</b> Trading involves high leverage (10×). Manage your margin to avoid liquidation.</p><br>
-        <p><b>4. Governing Law:</b> All disputes arising from the use of VELO shall be governed exclusively by the laws of the <b>Republic of Kenya</b>.</p>
-      </div>
-      <button class="btn btn-gold" style="margin-top:22px;" onclick="toggleTerms(false)">I ACCEPT TERMS</button>
     </div>
-  </div>
 
-  <div id="toast" class="toast"></div>
+    <div id="toast" class="toast"></div>
 
-  <script>
-    // ── State ────────────────────────────────────────────────
-    let balance  = parseFloat(localStorage.getItem('velo_balance') || '0');
-    let trades   = JSON.parse(localStorage.getItem('velo_trades')  || '[]');
-    let btcPrice = 0;
-    let prevPrice = 0;
-    let wsReconnectTimer = null;
-    let toastTimer = null;
+    <script>
+        // ── State ────────────────────────────────────────────────
+        let balance = parseFloat(localStorage.getItem('velo_balance') || '0');
+        let trades = JSON.parse(localStorage.getItem('velo_trades') || '[]');
+        let btcPrice = 0;
+        let prevPrice = 0;
+        let wsReconnectTimer = null;
+        let toastTimer = null;
 
-    const phone = '254700000000'; // ← YOUR NUMBER
+        const phone = '254700000000'; // ← YOUR NUMBER
 
-    function saveState() {
-      localStorage.setItem('velo_balance', balance.toFixed(2));
-      localStorage.setItem('velo_trades',  JSON.stringify(trades));
-    }
+        function saveState() {
+            localStorage.setItem('velo_balance', balance.toFixed(2));
+            localStorage.setItem('velo_trades', JSON.stringify(trades));
+        }
 
-    // ── WebSocket price feed ─────────────────────────────────
-    let ws;
-    function connectWS() {
-      ws = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@ticker');
+        // ── WebSocket price feed ─────────────────────────────────
+        let ws;
+        function connectWS() {
+            ws = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@ticker');
 
-      ws.onmessage = (e) => {
-        const d = JSON.parse(e.data);
-        const p  = parseFloat(d.c);
-        const ch = parseFloat(d.P);
-        const h  = parseFloat(d.h);
-        const l  = parseFloat(d.l);
-        const v  = parseFloat(d.v);
+            ws.onmessage = (e) => {
+                const d = JSON.parse(e.data);
+                const p = parseFloat(d.c);
+                const ch = parseFloat(d.P);
+                const h = parseFloat(d.h);
+                const l = parseFloat(d.l);
+                const v = parseFloat(d.v);
 
-        if (isNaN(p) || p <= 0) return;
+                if (isNaN(p) || p <= 0) return;
 
-        // Ticker bar
-        const el = document.getElementById('ticker-price');
-        el.textContent = '$' + p.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
-        el.classList.toggle('up',   p > prevPrice);
-        el.classList.toggle('down', p < prevPrice);
+                // Ticker bar
+                const el = document.getElementById('ticker-price');
+                el.textContent = '$' + p.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                el.classList.toggle('up', p > prevPrice);
+                el.classList.toggle('down', p < prevPrice);
 
-        const chEl = document.getElementById('ticker-change');
-        const pos  = ch >= 0;
-        chEl.textContent = (pos ? '+' : '') + ch.toFixed(2) + '%';
-        chEl.className   = 'ticker-change ' + (pos ? 'pos' : 'neg');
+                const chEl = document.getElementById('ticker-change');
+                const pos = ch >= 0;
+                chEl.textContent = (pos ? '+' : '') + ch.toFixed(2) + '%';
+                chEl.className = 'ticker-change ' + (pos ? 'pos' : 'neg');
 
-        document.getElementById('ticker-high').textContent = '$' + h.toLocaleString('en-US', {maximumFractionDigits:0});
-        document.getElementById('ticker-low').textContent  = '$' + l.toLocaleString('en-US', {maximumFractionDigits:0});
-        document.getElementById('ticker-vol').textContent  = (v/1000).toFixed(1) + 'K';
+                document.getElementById('ticker-high').textContent = '$' + h.toLocaleString('en-US', { maximumFractionDigits: 0 });
+                document.getElementById('ticker-low').textContent = '$' + l.toLocaleString('en-US', { maximumFractionDigits: 0 });
+                document.getElementById('ticker-vol').textContent = (v / 1000).toFixed(1) + 'K';
 
-        prevPrice = btcPrice;
-        btcPrice  = p;
-        if (trades.length) updatePnL();
-      };
+                prevPrice = btcPrice;
+                btcPrice = p;
+                if (trades.length) updatePnL();
+            };
 
-      ws.onclose = () => { wsReconnectTimer = setTimeout(connectWS, 3000); };
-      ws.onerror = () => { ws.close(); };
-    }
+            ws.onclose = () => { wsReconnectTimer = setTimeout(connectWS, 3000); };
+            ws.onerror = () => { ws.close(); };
+        }
 
-    connectWS();
-    window.addEventListener('beforeunload', () => { clearTimeout(wsReconnectTimer); ws && ws.close(); });
+        connectWS();
+        window.addEventListener('beforeunload', () => { clearTimeout(wsReconnectTimer); ws && ws.close(); });
 
-    // ── Navigation ───────────────────────────────────────────
-    function nextStep(n) {
-      document.querySelectorAll('#view-deposit .wizard-step').forEach(s => s.style.display = 'none');
-      const t = document.getElementById('step-' + n);
-      if (t) t.style.display = 'block';
-    }
+        // ── Navigation ───────────────────────────────────────────
+        function nextStep(n) {
+            document.querySelectorAll('#view-deposit .wizard-step').forEach(s => s.style.display = 'none');
+            const t = document.getElementById('step-' + n);
+            if (t) t.style.display = 'block';
+        }
 
-    function switchTab(type) {
-      document.getElementById('view-deposit').style.display  = type === 'deposit'  ? 'block' : 'none';
-      document.getElementById('view-withdraw').style.display = type === 'withdraw' ? 'block' : 'none';
-      document.getElementById('tab-dep-btn').classList.toggle('active', type === 'deposit');
-      document.getElementById('tab-with-btn').classList.toggle('active', type === 'withdraw');
-      if (type === 'deposit') nextStep(1);
-    }
+        function switchTab(type) {
+            document.getElementById('view-deposit').style.display = type === 'deposit' ? 'block' : 'none';
+            document.getElementById('view-withdraw').style.display = type === 'withdraw' ? 'block' : 'none';
+            document.getElementById('tab-dep-btn').classList.toggle('active', type === 'deposit');
+            document.getElementById('tab-with-btn').classList.toggle('active', type === 'withdraw');
+            if (type === 'deposit') nextStep(1);
+        }
 
-    // ── Trading ──────────────────────────────────────────────
-    function executeTrade(side) {
-      if (!btcPrice || btcPrice <= 0) return showToast('WAITING FOR LIVE PRICE — TRY AGAIN');
-      const margin = parseFloat(document.getElementById('trade-amount').value);
-      if (!margin || margin <= 0) return showToast('ENTER A VALID MARGIN');
-      if (margin > balance)       return showToast('INSUFFICIENT VAULT FUNDS');
-      balance -= margin;
-      trades.push({ side, entry: btcPrice, size: margin * 10 });
-      saveState();
-      updateUI();
-      showToast(side.toUpperCase() + ' POSITION OPENED');
-      document.getElementById('trade-amount').value = '';
-    }
+        // ── Trading ──────────────────────────────────────────────
+        function executeTrade(side) {
+            if (!btcPrice || btcPrice <= 0) return showToast('WAITING FOR LIVE PRICE — TRY AGAIN');
+            const margin = parseFloat(document.getElementById('trade-amount').value);
+            if (!margin || margin <= 0) return showToast('ENTER A VALID MARGIN');
+            if (margin > balance) return showToast('INSUFFICIENT VAULT FUNDS');
+            balance -= margin;
+            trades.push({ side, entry: btcPrice, size: margin * 10 });
+            saveState();
+            updateUI();
+            showToast(side.toUpperCase() + ' POSITION OPENED');
+            document.getElementById('trade-amount').value = '';
+        }
 
-    function updatePnL() {
-      let pnl = 0;
-      trades.forEach(t => {
-        if (!t.entry || t.entry <= 0) return;
-        const diff = (btcPrice - t.entry) / t.entry;
-        pnl += t.side === 'Long' ? t.size * diff : t.size * -diff;
-      });
-      const el  = document.getElementById('pnl-val');
-      el.textContent = (pnl >= 0 ? '+$' : '-$') + Math.abs(pnl).toFixed(2);
-      el.style.color = pnl >= 0 ? 'var(--green)' : 'var(--red)';
-    }
+        function updatePnL() {
+            let pnl = 0;
+            trades.forEach(t => {
+                if (!t.entry || t.entry <= 0) return;
+                const diff = (btcPrice - t.entry) / t.entry;
+                pnl += t.side === 'Long' ? t.size * diff : t.size * -diff;
+            });
+            const el = document.getElementById('pnl-val');
+            el.textContent = (pnl >= 0 ? '+$' : '-$') + Math.abs(pnl).toFixed(2);
+            el.style.color = pnl >= 0 ? 'var(--green)' : 'var(--red)';
+        }
 
-    function updateUI() {
-      document.getElementById('display-balance').textContent = balance.toFixed(2);
-      document.getElementById('active-count').textContent    = trades.length;
-    }
+        function updateUI() {
+            document.getElementById('display-balance').textContent = balance.toFixed(2);
+            document.getElementById('active-count').textContent = trades.length;
+        }
 
-    // ── Utilities ────────────────────────────────────────────
-    function copyAddr() {
-      navigator.clipboard.writeText('TWCphpX7xGQ9r5jCiLwcfHeF9skJ8bAZe1')
-        .then(() => showToast('ADDRESS COPIED'))
-        .catch(() => showToast('COPY FAILED — COPY MANUALLY'));
-    }
+        // ── Utilities ────────────────────────────────────────────
+        function copyAddr() {
+            navigator.clipboard.writeText('TWCphpX7xGQ9r5jCiLwcfHeF9skJ8bAZe1')
+                .then(() => showToast('ADDRESS COPIED'))
+                .catch(() => showToast('COPY FAILED — COPY MANUALLY'));
+        }
 
-    function showToast(msg) {
-      const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.style.display = 'block';
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => t.style.display = 'none', 3000);
-    }
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.style.display = 'block';
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => t.style.display = 'none', 3000);
+        }
 
-    function toggleTerms(show) {
-      document.getElementById('terms-modal').style.display = show ? 'block' : 'none';
-    }
+        function toggleTerms(show) {
+            document.getElementById('terms-modal').style.display = show ? 'block' : 'none';
+        }
 
-    function sendAction(type) {
-      let msg = '';
-      if (type === 'DEPOSIT') {
-        const amt = document.getElementById('kes-dep').value;
-        if (!amt || parseFloat(amt) <= 0) return showToast('ENTER A VALID AMOUNT');
-        msg = `*VELO DEPOSIT NOTIFICATION*\n\nAsset: USDT (TRC20)\nAmount: KES ${amt}\nStatus: Sent\n\nPlease audit and credit my terminal balance.`;
-        nextStep(1);
-        document.getElementById('kes-dep').value = '';
-      } else {
-        const amt  = document.getElementById('kes-with').value;
-        const addr = document.getElementById('addr-with').value.trim();
-        if (!amt || parseFloat(amt) < 1000) return showToast('MINIMUM WITHDRAWAL IS KES 1,000');
-        if (!addr.startsWith('T') || addr.length !== 34) return showToast('INVALID TRC20 ADDRESS');
-        msg = `*VELO WITHDRAWAL REQUEST*\n\nAmount: KES ${amt}\nDestination: ${addr}\nNetwork: TRC20`;
-      }
-      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`);
-    }
+        function sendAction(type) {
+            let msg = '';
+            if (type === 'DEPOSIT') {
+                const amt = document.getElementById('kes-dep').value;
+                if (!amt || parseFloat(amt) <= 0) return showToast('ENTER A VALID AMOUNT');
+                msg = `*VELO DEPOSIT NOTIFICATION*\n\nAsset: USDT (TRC20)\nAmount: KES ${amt}\nStatus: Sent\n\nPlease audit and credit my terminal balance.`;
+                nextStep(1);
+                document.getElementById('kes-dep').value = '';
+            } else {
+                const amt = document.getElementById('kes-with').value;
+                const addr = document.getElementById('addr-with').value.trim();
+                if (!amt || parseFloat(amt) < 1000) return showToast('MINIMUM WITHDRAWAL IS KES 1,000');
+                if (!addr.startsWith('T') || addr.length !== 34) return showToast('INVALID TRC20 ADDRESS');
+                msg = `*VELO WITHDRAWAL REQUEST*\n\nAmount: KES ${amt}\nDestination: ${addr}\nNetwork: TRC20`;
+            }
+            window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`);
+        }
 
-    // ── Init ─────────────────────────────────────────────────
-    updateUI();
-    if (trades.length) document.getElementById('pnl-val').textContent = 'AWAITING PRICE...';
-  </script>
+        // ── Init ─────────────────────────────────────────────────
+        updateUI();
+        if (trades.length) document.getElementById('pnl-val').textContent = 'AWAITING PRICE...';
+    </script>
 </body>
+
 </html>
