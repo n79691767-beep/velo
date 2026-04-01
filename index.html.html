@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>VELO | Private Terminal</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&display=swap"
-        rel="stylesheet" />
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <title>VELO | Private Terminal — TRON Deposit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+    <!-- QR code library (simple, lightweight, no external images) -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs2-fix@0.0.1/qrcode.min.js"></script>
     <style>
         :root {
             --bg: #050608;
@@ -25,16 +23,11 @@
             --nav-h: 60px;
             --ticker-h: 38px;
         }
-
-        *,
-        *::before,
-        *::after {
+        *, *::before, *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            outline: none;
         }
-
         body {
             background: var(--bg);
             color: var(--text);
@@ -44,8 +37,6 @@
             flex-direction: column;
             overflow-x: hidden;
         }
-
-        /* ── NAV ────────────────────────────────────────────── */
         nav {
             background: var(--surface);
             border-bottom: 1px solid var(--border);
@@ -59,7 +50,6 @@
             z-index: 200;
             flex-shrink: 0;
         }
-
         .logo {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 24px;
@@ -67,7 +57,6 @@
             color: var(--gold);
             line-height: 1;
         }
-
         .logo-sub {
             font-size: 9px;
             color: var(--text-dim);
@@ -75,7 +64,6 @@
             font-family: 'DM Mono', monospace;
             display: block;
         }
-
         .vault-display {
             background: var(--card);
             border: 1px solid var(--border);
@@ -83,22 +71,18 @@
             border-radius: 6px;
             text-align: right;
         }
-
         .vault-label {
             font-size: 8px;
             text-transform: uppercase;
             color: var(--text-dim);
             letter-spacing: 1px;
         }
-
         .vault-amt {
             font-family: 'DM Mono', monospace;
             color: var(--gold);
             font-size: 16px;
             font-weight: 500;
         }
-
-        /* ── PRICE TICKER BAR ────────────────────────────────── */
         .ticker-bar {
             background: var(--surface);
             border-bottom: 1px solid var(--border);
@@ -109,7 +93,6 @@
             padding: 0 16px;
             flex-shrink: 0;
         }
-
         .ticker-pair {
             font-size: 11px;
             font-weight: 700;
@@ -117,7 +100,6 @@
             letter-spacing: 1px;
             font-family: 'DM Mono', monospace;
         }
-
         .ticker-price {
             font-size: 18px;
             font-weight: 700;
@@ -125,15 +107,8 @@
             color: var(--text);
             transition: color 0.3s;
         }
-
-        .ticker-price.up {
-            color: var(--green);
-        }
-
-        .ticker-price.down {
-            color: var(--red);
-        }
-
+        .ticker-price.up { color: var(--green); }
+        .ticker-price.down { color: var(--red); }
         .ticker-change {
             font-size: 11px;
             font-family: 'DM Mono', monospace;
@@ -141,265 +116,63 @@
             border-radius: 3px;
             font-weight: 600;
         }
-
-        .ticker-change.pos {
-            background: rgba(29, 185, 106, 0.12);
-            color: var(--green);
-        }
-
-        .ticker-change.neg {
-            background: rgba(217, 64, 64, 0.12);
-            color: var(--red);
-        }
-
-        .ticker-extras {
-            margin-left: auto;
-            display: flex;
-            gap: 14px;
-        }
-
-        .ticker-stat {
-            font-size: 10px;
-            font-family: 'DM Mono', monospace;
-            color: var(--text-dim);
-        }
-
-        .ticker-stat span {
-            color: var(--text);
-        }
-
-        .ticker-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--green);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: .3;
-            }
-        }
-
-        /* ── MAIN LAYOUT ─────────────────────────────────────── */
-        .main {
-            flex: 1;
-            display: flex;
-            overflow: hidden;
-            /* desktop: locked height */
-        }
-
-        /* chart takes remaining width on desktop */
-        .chart-area {
-            flex: 1;
-            min-width: 0;
-            background: #000;
-            border-right: 1px solid var(--border);
-            position: relative;
-        }
-
-        .chart-area iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            display: block;
-        }
-
-        /* sidebar fixed width on desktop */
-        .sidebar {
-            width: 360px;
-            flex-shrink: 0;
-            background: var(--surface);
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            padding: 14px;
-            scrollbar-width: none;
-            gap: 12px;
-        }
-
-        .sidebar::-webkit-scrollbar {
-            display: none;
-        }
-
-        /* ── SECTION CARDS ───────────────────────────────────── */
-        .section {
-            padding: 16px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            background: var(--card);
-        }
-
-        .section-h {
-            font-size: 9px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--text-dim);
-            margin-bottom: 14px;
-            font-weight: 700;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        /* ── TABS ────────────────────────────────────────────── */
-        .tabs {
-            display: flex;
-            background: #000;
-            padding: 3px;
-            border-radius: 6px;
-            margin-bottom: 16px;
-            border: 1px solid var(--border);
-        }
-
-        .tab {
-            flex: 1;
-            padding: 9px;
-            border: none;
-            background: transparent;
-            color: var(--text-dim);
-            font-size: 11px;
-            cursor: pointer;
-            border-radius: 4px;
-            font-weight: 600;
-            transition: .2s;
-        }
-
-        .tab.active {
-            background: var(--border);
-            color: var(--gold);
-        }
-
-        /* ── INPUTS ──────────────────────────────────────────── */
-        .input-group {
-            margin-bottom: 12px;
-        }
-
-        .input-label {
-            font-size: 9px;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            margin-bottom: 6px;
-            display: block;
-            letter-spacing: 1px;
-        }
-
-        input {
-            width: 100%;
-            background: #050608;
-            border: 1px solid var(--border);
-            padding: 12px;
-            color: #fff;
-            font-family: 'DM Mono', monospace;
-            border-radius: 6px;
-            font-size: 14px;
-            transition: border-color .2s;
-        }
-
-        input:focus {
-            border-color: var(--gold-dim);
-        }
-
-        /* ── BUTTONS ─────────────────────────────────────────── */
-        .btn {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 6px;
-            font-weight: 700;
-            cursor: pointer;
-            text-transform: uppercase;
-            font-size: 11px;
-            letter-spacing: 1px;
-            transition: .2s;
-        }
-
-        .btn:hover {
-            filter: brightness(1.1);
-        }
-
-        .btn:active {
-            transform: scale(.98);
-        }
-
-        .btn-green {
-            background: var(--green);
-            color: #fff;
-        }
-
-        .btn-gold {
-            background: var(--gold);
-            color: #000;
-        }
-
-        .btn-red {
-            background: var(--red);
-            color: #fff;
-        }
-
-        .btn-ghost {
-            background: #1c2028;
-            color: var(--text);
-        }
-
-        .trade-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        /* ── STAT ROWS ───────────────────────────────────────── */
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            font-size: 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, .05);
-        }
-
-        .stat-val {
-            font-family: 'DM Mono', monospace;
-            font-weight: 500;
-        }
-
-        /* ── DEPOSIT WIZARD ──────────────────────────────────── */
-        .wizard-step {
-            animation: fadeIn .25s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(4px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
+        .ticker-change.pos { background: rgba(29, 185, 106, 0.12); color: var(--green); }
+        .ticker-change.neg { background: rgba(217, 64, 64, 0.12); color: var(--red); }
+        .ticker-extras { margin-left: auto; display: flex; gap: 14px; }
+        .ticker-stat { font-size: 10px; font-family: 'DM Mono', monospace; color: var(--text-dim); }
+        .ticker-stat span { color: var(--text); }
+        .ticker-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+        .main { flex: 1; display: flex; overflow: hidden; }
+        .chart-area { flex: 1; min-width: 0; background: #000; border-right: 1px solid var(--border); position: relative; }
+        .chart-area iframe { width: 100%; height: 100%; border: none; display: block; }
+        .sidebar { width: 360px; flex-shrink: 0; background: var(--surface); display: flex; flex-direction: column; overflow-y: auto; padding: 14px; scrollbar-width: none; gap: 12px; }
+        .sidebar::-webkit-scrollbar { display: none; }
+        .section { padding: 16px; border: 1px solid var(--border); border-radius: 8px; background: var(--card); }
+        .section-h { font-size: 9px; text-transform: uppercase; letter-spacing: 2px; color: var(--text-dim); margin-bottom: 14px; font-weight: 700; display: flex; justify-content: space-between; }
+        .tabs { display: flex; background: #000; padding: 3px; border-radius: 6px; margin-bottom: 16px; border: 1px solid var(--border); }
+        .tab { flex: 1; padding: 9px; border: none; background: transparent; color: var(--text-dim); font-size: 11px; cursor: pointer; border-radius: 4px; font-weight: 600; transition: .2s; }
+        .tab.active { background: var(--border); color: var(--gold); }
+        .input-group { margin-bottom: 12px; }
+        .input-label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 6px; display: block; letter-spacing: 1px; }
+        input { width: 100%; background: #050608; border: 1px solid var(--border); padding: 12px; color: #fff; font-family: 'DM Mono', monospace; border-radius: 6px; font-size: 14px; transition: border-color .2s; }
+        input:focus { border-color: var(--gold-dim); }
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; transition: .2s; }
+        .btn:hover { filter: brightness(1.1); }
+        .btn:active { transform: scale(.98); }
+        .btn-green { background: var(--green); color: #fff; }
+        .btn-gold { background: var(--gold); color: #000; }
+        .btn-red { background: var(--red); color: #fff; }
+        .btn-ghost { background: #1c2028; color: var(--text); }
+        .trade-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .stat-row { display: flex; justify-content: space-between; padding: 10px 0; font-size: 12px; border-bottom: 1px solid rgba(255,255,255,.05); }
+        .stat-val { font-family: 'DM Mono', monospace; font-weight: 500; }
+        .wizard-step { animation: fadeIn .25s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+        /* QR CONTAINER - actual dynamic tron qr code */
         .qr-wrapper {
-            background: #fff;
-            padding: 10px;
-            border-radius: 8px;
-            width: 160px;
-            margin: 0 auto 16px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, .5);
+            background: #ffffff;
+            padding: 12px;
+            border-radius: 16px;
+            width: 180px;
+            margin: 0 auto 18px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-
-        .qr-wrapper img {
+        #dynamic-qr {
             width: 100%;
             height: auto;
             display: block;
         }
-
+        /* ensure canvas QR scales nicely */
+        #dynamic-qr img, #dynamic-qr canvas {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
         .address-box {
             background: #000;
             border: 1px dashed var(--gold-dim);
@@ -410,449 +183,425 @@
             margin-bottom: 10px;
             transition: border-color .2s;
         }
-
-        .address-box:hover {
-            border-color: var(--gold);
-        }
-
-        .address-text {
-            font-family: 'DM Mono', monospace;
-            font-size: 10px;
-            color: var(--gold);
-            word-break: break-all;
-        }
-
-        /* ── MODAL ───────────────────────────────────────────── */
-        #terms-modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, .95);
-            z-index: 1000;
-            display: none;
-            padding: 40px 20px;
-            overflow-y: auto;
-        }
-
-        .terms-content {
-            max-width: 480px;
-            margin: 0 auto;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            padding: 28px;
-            border-radius: 8px;
-        }
-
-        /* ── TOAST ───────────────────────────────────────────── */
-        .toast {
-            position: fixed;
-            bottom: 28px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--gold);
-            color: #000;
-            padding: 11px 22px;
-            border-radius: 4px;
-            font-weight: 700;
-            font-size: 11px;
-            letter-spacing: .5px;
-            z-index: 2000;
-            display: none;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, .8);
-            white-space: nowrap;
-        }
-
-        /* ── INFO NOTICE ─────────────────────────────────────── */
-        .info-box {
-            background: rgba(201, 168, 76, .07);
-            border: 1px solid var(--gold-dim);
-            border-radius: 6px;
-            padding: 10px 12px;
-            font-size: 10px;
-            color: var(--text-dim);
-            line-height: 1.7;
-            margin-bottom: 12px;
-        }
-
-        .info-box b {
-            color: var(--text);
-        }
-
-        /* ── MOBILE RESPONSIVE ───────────────────────────────── */
+        .address-box:hover { border-color: var(--gold); }
+        .address-text { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gold); word-break: break-all; }
+        .info-box { background: rgba(201,168,76,.07); border: 1px solid var(--gold-dim); border-radius: 6px; padding: 10px 12px; font-size: 10px; color: var(--text-dim); line-height: 1.7; margin-bottom: 12px; }
+        .info-box b { color: var(--text); }
+        #terms-modal { position: fixed; inset: 0; background: rgba(0,0,0,.95); z-index: 1000; display: none; padding: 40px 20px; overflow-y: auto; }
+        .terms-content { max-width: 480px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); padding: 28px; border-radius: 8px; }
+        .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); background: var(--gold); color: #000; padding: 11px 22px; border-radius: 4px; font-weight: 700; font-size: 11px; letter-spacing: .5px; z-index: 2000; display: none; box-shadow: 0 10px 40px rgba(0,0,0,.8); white-space: nowrap; }
         @media (max-width: 768px) {
-
-            /* unlock body scroll */
-            body {
-                overflow-x: hidden;
-                overflow-y: auto;
-            }
-
-            /* main stacks vertically, no overflow-hidden */
-            .main {
-                flex-direction: column;
-                overflow: visible;
-                height: auto;
-            }
-
-            /* chart: fixed aspect-ratio block */
-            .chart-area {
-                width: 100%;
-                height: 52vw;
-                /* roughly 16:9 ish on mobile */
-                min-height: 240px;
-                max-height: 340px;
-                border-right: none;
-                border-bottom: 1px solid var(--border);
-                flex: none;
-            }
-
-            /* sidebar: full width, no fixed height */
-            .sidebar {
-                width: 100%;
-                overflow-y: visible;
-                padding: 12px;
-                gap: 10px;
-            }
-
-            /* ticker: hide the less-important extras on very small screens */
-            .ticker-extras {
-                display: none;
-            }
-
-            .vault-amt {
-                font-size: 14px;
-            }
-
-            .logo {
-                font-size: 20px;
-            }
+            body { overflow-y: auto; }
+            .main { flex-direction: column; overflow: visible; height: auto; }
+            .chart-area { width: 100%; height: 52vw; min-height: 240px; max-height: 340px; border-right: none; border-bottom: 1px solid var(--border); flex: none; }
+            .sidebar { width: 100%; overflow-y: visible; padding: 12px; gap: 10px; }
+            .ticker-extras { display: none; }
+            .vault-amt { font-size: 14px; }
+            .logo { font-size: 20px; }
         }
-
-        @media (max-width: 400px) {
-            .ticker-change {
-                display: none;
-            }
-        }
-
-        /* ── DESKTOP BODY LOCK ───────────────────────────────── */
+        @media (max-width: 400px) { .ticker-change { display: none; } }
         @media (min-width: 769px) {
-            body {
-                height: 100vh;
-                overflow: hidden;
-            }
-
-            .main {
-                height: calc(100vh - var(--nav-h) - var(--ticker-h));
-                overflow: hidden;
-            }
+            body { height: 100vh; overflow: hidden; }
+            .main { height: calc(100vh - var(--nav-h) - var(--ticker-h)); overflow: hidden; }
+        }
+        .network-badge {
+            background: #1e2a1f;
+            color: #8bc34a;
+            font-size: 9px;
+            padding: 2px 8px;
+            border-radius: 14px;
+            display: inline-block;
+            font-weight: 600;
         }
     </style>
 </head>
-
 <body>
 
-    <!-- NAV -->
-    <nav>
-        <div>
-            <div class="logo">VELO</div>
-            <span class="logo-sub">CRYPTO TRADING PLATFORM</span>
-        </div>
-        <div class="vault-display">
-            <div class="vault-label">Live Vault Balance</div>
-            <div class="vault-amt">$<span id="display-balance">0.00</span></div>
-        </div>
-    </nav>
-
-    <!-- PRICE TICKER BAR -->
-    <div class="ticker-bar">
-        <div class="ticker-dot"></div>
-        <span class="ticker-pair">BTC/USDT</span>
-        <span class="ticker-price" id="ticker-price">—</span>
-        <span class="ticker-change" id="ticker-change"></span>
-        <div class="ticker-extras">
-            <span class="ticker-stat">24H HIGH <span id="ticker-high">—</span></span>
-            <span class="ticker-stat">24H LOW <span id="ticker-low">—</span></span>
-            <span class="ticker-stat">VOL <span id="ticker-vol">—</span></span>
-        </div>
+<nav>
+    <div>
+        <div class="logo">VELO</div>
+        <span class="logo-sub">CRYPTO TRADING PLATFORM</span>
     </div>
+    <div class="vault-display">
+        <div class="vault-label">Live Vault Balance</div>
+        <div class="vault-amt">$<span id="display-balance">0.00</span></div>
+    </div>
+</nav>
 
-    <!-- MAIN -->
-    <div class="main">
+<div class="ticker-bar">
+    <div class="ticker-dot"></div>
+    <span class="ticker-pair">BTC/USDT</span>
+    <span class="ticker-price" id="ticker-price">—</span>
+    <span class="ticker-change" id="ticker-change"></span>
+    <div class="ticker-extras">
+        <span class="ticker-stat">24H HIGH <span id="ticker-high">—</span></span>
+        <span class="ticker-stat">24H LOW <span id="ticker-low">—</span></span>
+        <span class="ticker-stat">VOL <span id="ticker-vol">—</span></span>
+    </div>
+</div>
 
-        <!-- CHART -->
-        <div class="chart-area">
-            <iframe
-                src="https://s.tradingview.com/widgetembed/?symbol=BINANCE%3ABTCUSDT&interval=60&theme=dark&style=1&timezone=Etc%2FUTC&locale=en"
-                loading="lazy" allowfullscreen>
-            </iframe>
+<div class="main">
+    <div class="chart-area">
+        <iframe src="https://s.tradingview.com/widgetembed/?symbol=BINANCE%3ABTCUSDT&interval=60&theme=dark&style=1&timezone=Etc%2FUTC&locale=en" loading="lazy" allowfullscreen></iframe>
+    </div>
+    <div class="sidebar">
+        <div class="section">
+            <div class="section-h">Market Execution <span style="color:var(--gold)">10× Leverage</span></div>
+            <div class="input-group">
+                <span class="input-label">Trade Margin (USDT)</span>
+                <input type="number" id="trade-amount" placeholder="0.00" min="0" />
+            </div>
+            <div class="trade-grid">
+                <button class="btn btn-green" onclick="executeTrade('Long')">▲ Buy Long</button>
+                <button class="btn btn-red" onclick="executeTrade('Short')">▼ Sell Short</button>
+            </div>
         </div>
 
-        <!-- SIDEBAR -->
-        <div class="sidebar">
+        <div class="section">
+            <div class="section-h">Funding & Payouts</div>
+            <div class="tabs">
+                <button class="tab active" id="tab-dep-btn" onclick="switchTab('deposit')">Add Funds</button>
+                <button class="tab" id="tab-with-btn" onclick="switchTab('withdraw')">Withdraw</button>
+            </div>
 
-            <!-- TRADE PANEL -->
-            <div class="section">
-                <div class="section-h">Market Execution <span style="color:var(--gold)">10× Leverage</span></div>
+            <!-- DEPOSIT WIZARD with working TRON QR code -->
+            <div id="view-deposit">
+                <div id="step-1" class="wizard-step">
+                    <p style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:6px;">STEP 1 — Send USDT (TRC20)</p>
+                    <p style="font-size:11px;color:var(--text-dim);margin-bottom:10px;line-height:1.6;">
+                        Send <b style="color:var(--text)">USDT</b> from any wallet or exchange to the address below.<br>
+                        <span class="network-badge">TRON NETWORK (TRC20)</span>
+                    </p>
+                    <div class="info-box">
+                        ✔ Use the <b>TRON (TRC20) network</b> — not BEP20, not ERC20<br>
+                        ✔ Send <b>USDT only</b> — minimum deposit: <b>$10 USDT</b><br>
+                        ✔ Funds credited after 1 on-chain confirmation
+                    </div>
+                    <!-- DYNAMIC QR CODE generated from actual TRON address -->
+                    <div class="qr-wrapper" id="qr-container">
+                        <div id="dynamic-qr"></div>
+                    </div>
+                    <div class="address-box" onclick="copyAddr()">
+                        <div class="address-text" id="tron-address-display">TWCphpX7xGQ9r5jCiLwcfHeF9skJ8bAZe1</div>
+                        <p style="font-size:8px;color:var(--gold);margin-top:4px;font-weight:700;">TAP TO COPY ADDRESS</p>
+                    </div>
+                    <button class="btn btn-gold" onclick="nextStep(2)">I HAVE SENT THE MONEY →</button>
+                </div>
+
+                <div id="step-2" class="wizard-step" style="display:none;">
+                    <p style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:6px;">STEP 2 — How much did you send?</p>
+                    <p style="font-size:11px;color:var(--text-dim);margin-bottom:12px;">Enter the amount in <b>Kenyan Shillings (KES)</b> that you converted and sent.</p>
+                    <input type="number" id="kes-dep" placeholder="e.g. 5000 (KES)" min="0" style="margin-bottom:12px;" />
+                    <div style="display:flex;gap:10px;">
+                        <button class="btn btn-ghost" onclick="nextStep(1)">← BACK</button>
+                        <button class="btn btn-gold" onclick="nextStep(3)">CONTINUE →</button>
+                    </div>
+                </div>
+
+                <div id="step-3" class="wizard-step" style="display:none;">
+                    <p style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:6px;">STEP 3 — Notify Us</p>
+                    <p style="font-size:11px;color:var(--text-dim);margin-bottom:10px;">
+                        Tap below to alert our team on WhatsApp.<br>
+                        Your balance will appear within <b>15–60 minutes</b> once confirmed on TRON.
+                    </p>
+                    <button class="btn btn-green" onclick="sendAction('DEPOSIT')">NOTIFY US ON WHATSAPP →</button>
+                </div>
+            </div>
+
+            <!-- WITHDRAW SECTION -->
+            <div id="view-withdraw" style="display:none;">
                 <div class="input-group">
-                    <span class="input-label">Trade Margin (USDT)</span>
-                    <input type="number" id="trade-amount" placeholder="0.00" min="0" />
+                    <span class="input-label">Payout Amount (KES)</span>
+                    <input type="number" id="kes-with" placeholder="Minimum 1,000" min="1000" />
                 </div>
-                <div class="trade-grid">
-                    <button class="btn btn-green" onclick="executeTrade('Long')">▲ Buy Long</button>
-                    <button class="btn btn-red" onclick="executeTrade('Short')">▼ Sell Short</button>
+                <div class="input-group">
+                    <span class="input-label">Your TRC20 Receiving Address</span>
+                    <input type="text" id="addr-with" placeholder="Must start with 'T'" />
                 </div>
+                <button class="btn btn-gold" onclick="sendAction('WITHDRAW')">Request Payout</button>
             </div>
+        </div>
 
-            <!-- FUNDING -->
-            <div class="section">
-                <div class="section-h">Funding & Payouts</div>
-                <div class="tabs">
-                    <button class="tab active" id="tab-dep-btn" onclick="switchTab('deposit')">Add Funds</button>
-                    <button class="tab" id="tab-with-btn" onclick="switchTab('withdraw')">Withdraw</button>
-                </div>
-
-                <!-- DEPOSIT WIZARD -->
-                <div id="view-deposit">
-                    <div id="step-1" class="wizard-step">
-                        <p style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:6px;">STEP 1 — Send
-                            Money</p>
-                        <p style="font-size:11px;color:var(--text-dim);margin-bottom:10px;line-height:1.6;">
-                            Send <b style="color:var(--text)">USDT</b> from any wallet or exchange to the address below.
-                        </p>
-                        <div class="info-box">
-                            ✔ Use the <b>TRON (TRC20)</b> network — not BEP20, not ERC20<br>
-                            ✔ Send <b>USDT only</b> — not TRX, not BTC<br>
-                            ✔ Minimum deposit: <b>$10 USDT</b>
-                        </div>
-                        <div class="qr-wrapper">
-                            <img src="c:\Users\Felix\Downloads\WhatsApp Image 2026-03-30 at 9.13.39 AM.jpeg" />
-                        </div>
-                        <div class="address-box" onclick="copyAddr()">
-                            <div class="address-text">TWCphpX7xGQ9r5jCiLwcfHeF9skJ8bAZe1</div>
-                            <p style="font-size:8px;color:var(--gold);margin-top:4px;font-weight:700;">TAP TO COPY
-                                ADDRESS</p>
-                        </div>
-                        <button class="btn btn-gold" onclick="nextStep(2)">I HAVE SENT THE MONEY →</button>
-                    </div>
-
-                    <div id="step-2" class="wizard-step" style="display:none;">
-                        <p style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:6px;">STEP 2 — How much
-                            did you send?</p>
-                        <p style="font-size:11px;color:var(--text-dim);margin-bottom:12px;line-height:1.6;">
-                            Enter the amount in <b style="color:var(--text)">Kenyan Shillings (KES)</b> that you
-                            converted and sent.
-                        </p>
-                        <input type="number" id="kes-dep" placeholder="e.g. 5000 (KES)" min="0"
-                            style="margin-bottom:12px;" />
-                        <div style="display:flex;gap:10px;">
-                            <button class="btn btn-ghost" onclick="nextStep(1)">← BACK</button>
-                            <button class="btn btn-gold" onclick="nextStep(3)">CONTINUE →</button>
-                        </div>
-                    </div>
-
-                    <div id="step-3" class="wizard-step" style="display:none;">
-                        <p style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:6px;">STEP 3 — Notify
-                            Us</p>
-                        <p style="font-size:11px;color:var(--text-dim);margin-bottom:10px;line-height:1.7;">
-                            Tap below to alert our team on WhatsApp.<br>
-                            Your balance will appear within <b style="color:var(--text)">15–60 minutes</b> once
-                            confirmed on TRON.
-                        </p>
-                        <button class="btn btn-green" onclick="sendAction('DEPOSIT')">NOTIFY US ON WHATSAPP →</button>
-                    </div>
-                </div>
-
-                <!-- WITHDRAW -->
-                <div id="view-withdraw" style="display:none;">
-                    <div class="input-group">
-                        <span class="input-label">Payout Amount (KES)</span>
-                        <input type="number" id="kes-with" placeholder="Minimum 1,000" min="1000" />
-                    </div>
-                    <div class="input-group">
-                        <span class="input-label">Your TRC20 Receiving Address</span>
-                        <input type="text" id="addr-with" placeholder="Must start with 'T'" />
-                    </div>
-                    <button class="btn btn-gold" onclick="sendAction('WITHDRAW')">Request Payout</button>
-                </div>
-            </div>
-
-            <!-- PORTFOLIO STATS -->
-            <div class="section" style="border:none; padding-top:4px;">
-                <div class="stat-row"><span>Open Positions</span><span id="active-count" class="stat-val">0</span></div>
-                <div class="stat-row"><span>Unrealized P&amp;L</span><span id="pnl-val" class="stat-val">$0.00</span>
-                </div>
-                <p style="font-size:10px;color:var(--text-dim);text-align:center;margin-top:16px;text-decoration:underline;cursor:pointer;"
-                    onclick="toggleTerms(true)">Legal Disclosures &amp; Terms</p>
-            </div>
-
-        </div><!-- /sidebar -->
-    </div><!-- /main -->
-
-    <!-- TERMS MODAL -->
-    <div id="terms-modal">
-        <div class="terms-content">
-            <h2 style="font-family:'Bebas Neue';color:var(--gold);margin-bottom:18px;font-size:22px;">Institutional
-                Terms</h2>
-            <div style="font-size:12px;color:var(--text-dim);line-height:1.8;">
-                <p><b>1. Network Policy:</b> VELO operates exclusively on the <b>TRON (TRC20)</b> network. Deposits sent
-                    via ERC20, BEP20, or other chains are non-recoverable.</p><br>
-                <p><b>2. Manual Auditing:</b> All deposits and payouts are audited manually. Credits typically reflect
-                    within 15–60 minutes.</p><br>
-                <p><b>3. Market Risk:</b> Trading involves high leverage (10×). Manage your margin to avoid liquidation.
-                </p><br>
-                <p><b>4. Governing Law:</b> All disputes arising from the use of VELO shall be governed exclusively by
-                    the laws of the <b>Republic of Kenya</b>.</p>
-            </div>
-            <button class="btn btn-gold" style="margin-top:22px;" onclick="toggleTerms(false)">I ACCEPT TERMS</button>
+        <div class="section" style="border:none; padding-top:4px;">
+            <div class="stat-row"><span>Open Positions</span><span id="active-count" class="stat-val">0</span></div>
+            <div class="stat-row"><span>Unrealized P&amp;L</span><span id="pnl-val" class="stat-val">$0.00</span></div>
+            <p style="font-size:10px;color:var(--text-dim);text-align:center;margin-top:16px;text-decoration:underline;cursor:pointer;" onclick="toggleTerms(true)">Legal Disclosures &amp; Terms</p>
         </div>
     </div>
+</div>
 
-    <div id="toast" class="toast"></div>
+<div id="terms-modal">
+    <div class="terms-content">
+        <h2 style="font-family:'Bebas Neue';color:var(--gold);margin-bottom:18px;font-size:22px;">Institutional Terms</h2>
+        <div style="font-size:12px;color:var(--text-dim);line-height:1.8;">
+            <p><b>1. Network Policy:</b> VELO operates exclusively on the <b>TRON (TRC20)</b> network. Deposits sent via ERC20, BEP20, or other chains are non-recoverable.</p><br>
+            <p><b>2. Manual Auditing:</b> All deposits and payouts are audited manually. Credits typically reflect within 15–60 minutes.</p><br>
+            <p><b>3. Market Risk:</b> Trading involves high leverage (10×). Manage your margin to avoid liquidation.</p><br>
+            <p><b>4. Governing Law:</b> All disputes arising from the use of VELO shall be governed exclusively by the laws of the <b>Republic of Kenya</b>.</p>
+        </div>
+        <button class="btn btn-gold" style="margin-top:22px;" onclick="toggleTerms(false)">I ACCEPT TERMS</button>
+    </div>
+</div>
 
-    <script>
-        // ── State ────────────────────────────────────────────────
-        let balance = parseFloat(localStorage.getItem('velo_balance') || '0');
-        let trades = JSON.parse(localStorage.getItem('velo_trades') || '[]');
-        let btcPrice = 0;
-        let prevPrice = 0;
-        let wsReconnectTimer = null;
-        let toastTimer = null;
+<div id="toast" class="toast"></div>
 
-        const phone = '254700000000'; // ← YOUR NUMBER
+<script>
+    // ======================== TRON ADDRESS (MAIN WALLET) ========================
+    const TRON_DEPOSIT_ADDRESS = "TWCphpX7xGQ9r5jCiLwcfHeF9skJ8bAZe1";
+    
+    // State variables
+    let balance = parseFloat(localStorage.getItem('velo_balance') || '0');
+    let trades = JSON.parse(localStorage.getItem('velo_trades') || '[]');
+    let btcPrice = 0;
+    let prevPrice = 0;
+    let wsReconnectTimer = null;
+    let toastTimer = null;
+    const phone = '254700000000';  // update to real whatsapp number if needed
 
-        function saveState() {
-            localStorage.setItem('velo_balance', balance.toFixed(2));
-            localStorage.setItem('velo_trades', JSON.stringify(trades));
-        }
+    // Helper functions
+    function saveState() {
+        localStorage.setItem('velo_balance', balance.toFixed(2));
+        localStorage.setItem('velo_trades', JSON.stringify(trades));
+    }
 
-        // ── WebSocket price feed ─────────────────────────────────
-        let ws;
-        function connectWS() {
-            ws = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@ticker');
-
-            ws.onmessage = (e) => {
-                const d = JSON.parse(e.data);
-                const p = parseFloat(d.c);
-                const ch = parseFloat(d.P);
-                const h = parseFloat(d.h);
-                const l = parseFloat(d.l);
-                const v = parseFloat(d.v);
-
-                if (isNaN(p) || p <= 0) return;
-
-                // Ticker bar
-                const el = document.getElementById('ticker-price');
-                el.textContent = '$' + p.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                el.classList.toggle('up', p > prevPrice);
-                el.classList.toggle('down', p < prevPrice);
-
-                const chEl = document.getElementById('ticker-change');
-                const pos = ch >= 0;
-                chEl.textContent = (pos ? '+' : '') + ch.toFixed(2) + '%';
-                chEl.className = 'ticker-change ' + (pos ? 'pos' : 'neg');
-
-                document.getElementById('ticker-high').textContent = '$' + h.toLocaleString('en-US', { maximumFractionDigits: 0 });
-                document.getElementById('ticker-low').textContent = '$' + l.toLocaleString('en-US', { maximumFractionDigits: 0 });
-                document.getElementById('ticker-vol').textContent = (v / 1000).toFixed(1) + 'K';
-
-                prevPrice = btcPrice;
-                btcPrice = p;
-                if (trades.length) updatePnL();
-            };
-
-            ws.onclose = () => { wsReconnectTimer = setTimeout(connectWS, 3000); };
-            ws.onerror = () => { ws.close(); };
-        }
-
-        connectWS();
-        window.addEventListener('beforeunload', () => { clearTimeout(wsReconnectTimer); ws && ws.close(); });
-
-        // ── Navigation ───────────────────────────────────────────
-        function nextStep(n) {
-            document.querySelectorAll('#view-deposit .wizard-step').forEach(s => s.style.display = 'none');
-            const t = document.getElementById('step-' + n);
-            if (t) t.style.display = 'block';
-        }
-
-        function switchTab(type) {
-            document.getElementById('view-deposit').style.display = type === 'deposit' ? 'block' : 'none';
-            document.getElementById('view-withdraw').style.display = type === 'withdraw' ? 'block' : 'none';
-            document.getElementById('tab-dep-btn').classList.toggle('active', type === 'deposit');
-            document.getElementById('tab-with-btn').classList.toggle('active', type === 'withdraw');
-            if (type === 'deposit') nextStep(1);
-        }
-
-        // ── Trading ──────────────────────────────────────────────
-        function executeTrade(side) {
-            if (!btcPrice || btcPrice <= 0) return showToast('WAITING FOR LIVE PRICE — TRY AGAIN');
-            const margin = parseFloat(document.getElementById('trade-amount').value);
-            if (!margin || margin <= 0) return showToast('ENTER A VALID MARGIN');
-            if (margin > balance) return showToast('INSUFFICIENT VAULT FUNDS');
-            balance -= margin;
-            trades.push({ side, entry: btcPrice, size: margin * 10 });
-            saveState();
-            updateUI();
-            showToast(side.toUpperCase() + ' POSITION OPENED');
-            document.getElementById('trade-amount').value = '';
-        }
-
-        function updatePnL() {
-            let pnl = 0;
-            trades.forEach(t => {
-                if (!t.entry || t.entry <= 0) return;
-                const diff = (btcPrice - t.entry) / t.entry;
-                pnl += t.side === 'Long' ? t.size * diff : t.size * -diff;
+    // ---------- QR CODE generation (fix: real TRON address QR) ----------
+    function generateTronQR() {
+        const qrContainer = document.getElementById("dynamic-qr");
+        if (!qrContainer) return;
+        // clear any previous content
+        qrContainer.innerHTML = "";
+        try {
+            // Using QRCode.js library (qrcodejs2-fix) - create new QRCode instance
+            // The library expects a div element and options
+            // @ts-ignore
+            new QRCode(qrContainer, {
+                text: TRON_DEPOSIT_ADDRESS,
+                width: 160,
+                height: 160,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.M
             });
-            const el = document.getElementById('pnl-val');
-            el.textContent = (pnl >= 0 ? '+$' : '-$') + Math.abs(pnl).toFixed(2);
-            el.style.color = pnl >= 0 ? 'var(--green)' : 'var(--red)';
+        } catch(e) {
+            console.warn("QR init fallback", e);
+            qrContainer.innerHTML = `<div style="background:#fff; padding:8px; border-radius:12px; text-align:center; color:#000; font-size:9px;">⚠️ QR failed<br>Address: ${TRON_DEPOSIT_ADDRESS.slice(0,8)}...</div>`;
         }
-
-        function updateUI() {
-            document.getElementById('display-balance').textContent = balance.toFixed(2);
-            document.getElementById('active-count').textContent = trades.length;
-        }
-
-        // ── Utilities ────────────────────────────────────────────
-        function copyAddr() {
-            navigator.clipboard.writeText('TWCphpX7xGQ9r5jCiLwcfHeF9skJ8bAZe1')
-                .then(() => showToast('ADDRESS COPIED'))
-                .catch(() => showToast('COPY FAILED — COPY MANUALLY'));
-        }
-
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            t.textContent = msg;
-            t.style.display = 'block';
-            clearTimeout(toastTimer);
-            toastTimer = setTimeout(() => t.style.display = 'none', 3000);
-        }
-
-        function toggleTerms(show) {
-            document.getElementById('terms-modal').style.display = show ? 'block' : 'none';
-        }
-
-        function sendAction(type) {
-            let msg = '';
-            if (type === 'DEPOSIT') {
-                const amt = document.getElementById('kes-dep').value;
-                if (!amt || parseFloat(amt) <= 0) return showToast('ENTER A VALID AMOUNT');
-                msg = `*VELO DEPOSIT NOTIFICATION*\n\nAsset: USDT (TRC20)\nAmount: KES ${amt}\nStatus: Sent\n\nPlease audit and credit my terminal balance.`;
-                nextStep(1);
-                document.getElementById('kes-dep').value = '';
-            } else {
-                const amt = document.getElementById('kes-with').value;
-                const addr = document.getElementById('addr-with').value.trim();
-                if (!amt || parseFloat(amt) < 1000) return showToast('MINIMUM WITHDRAWAL IS KES 1,000');
-                if (!addr.startsWith('T') || addr.length !== 34) return showToast('INVALID TRC20 ADDRESS');
-                msg = `*VELO WITHDRAWAL REQUEST*\n\nAmount: KES ${amt}\nDestination: ${addr}\nNetwork: TRC20`;
+    }
+    
+    // also refresh on window load and whenever deposit tab becomes visible (for safety)
+    function refreshDepositQR() {
+        const step1 = document.getElementById('step-1');
+        if (step1 && step1.style.display !== 'none') {
+            // re-generate QR to ensure visibility (sometimes library needs re-attach)
+            const qrDiv = document.getElementById("dynamic-qr");
+            if (qrDiv) {
+                qrDiv.innerHTML = "";
+                try {
+                    // @ts-ignore
+                    new QRCode(qrDiv, {
+                        text: TRON_DEPOSIT_ADDRESS,
+                        width: 160,
+                        height: 160,
+                        colorDark: "#000000",
+                        colorLight: "#ffffff"
+                    });
+                } catch(e) { console.error(e); }
             }
+        }
+    }
+    
+    // copy address handler
+    function copyAddr() {
+        navigator.clipboard.writeText(TRON_DEPOSIT_ADDRESS)
+            .then(() => showToast('✅ TRON ADDRESS COPIED'))
+            .catch(() => showToast('⚠️ MANUAL COPY: ' + TRON_DEPOSIT_ADDRESS));
+    }
+    
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.style.display = 'block';
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => t.style.display = 'none', 3000);
+    }
+    
+    // deposit wizard steps
+    function nextStep(n) {
+        document.querySelectorAll('#view-deposit .wizard-step').forEach(s => s.style.display = 'none');
+        const target = document.getElementById('step-' + n);
+        if (target) target.style.display = 'block';
+        if (n === 1) {
+            // ensure QR is visible when returning to step 1 (prevents empty qr)
+            setTimeout(() => refreshDepositQR(), 30);
+        }
+    }
+    
+    function switchTab(type) {
+        const depositDiv = document.getElementById('view-deposit');
+        const withdrawDiv = document.getElementById('view-withdraw');
+        const depBtn = document.getElementById('tab-dep-btn');
+        const withBtn = document.getElementById('tab-with-btn');
+        if (type === 'deposit') {
+            depositDiv.style.display = 'block';
+            withdrawDiv.style.display = 'none';
+            depBtn.classList.add('active');
+            withBtn.classList.remove('active');
+            nextStep(1);
+            // Regenerate QR code every time deposit tab is shown (critical fix)
+            setTimeout(() => {
+                const qrContainer = document.getElementById("dynamic-qr");
+                if (qrContainer) {
+                    qrContainer.innerHTML = "";
+                    // @ts-ignore
+                    new QRCode(qrContainer, {
+                        text: TRON_DEPOSIT_ADDRESS,
+                        width: 160,
+                        height: 160,
+                        colorDark: "#000000",
+                        colorLight: "#ffffff"
+                    });
+                }
+            }, 20);
+        } else {
+            depositDiv.style.display = 'none';
+            withdrawDiv.style.display = 'block';
+            withBtn.classList.add('active');
+            depBtn.classList.remove('active');
+        }
+    }
+    
+    // Trading logic
+    function executeTrade(side) {
+        if (!btcPrice || btcPrice <= 0) return showToast('⛔ WAITING FOR LIVE PRICE');
+        const margin = parseFloat(document.getElementById('trade-amount').value);
+        if (!margin || margin <= 0) return showToast('ENTER VALID MARGIN (USDT)');
+        if (margin > balance) return showToast('INSUFFICIENT VAULT FUNDS');
+        balance -= margin;
+        trades.push({ side, entry: btcPrice, size: margin * 10 });
+        saveState();
+        updateUI();
+        updatePnL();
+        showToast(`${side.toUpperCase()} POSITION OPENED | ${margin} USDT margin`);
+        document.getElementById('trade-amount').value = '';
+    }
+    
+    function updatePnL() {
+        if (!btcPrice || trades.length === 0) {
+            if(trades.length) document.getElementById('pnl-val').textContent = 'AWAITING PRICE...';
+            else document.getElementById('pnl-val').textContent = '$0.00';
+            return;
+        }
+        let pnl = 0;
+        trades.forEach(t => {
+            if (!t.entry || t.entry <= 0) return;
+            const diff = (btcPrice - t.entry) / t.entry;
+            pnl += t.side === 'Long' ? t.size * diff : t.size * -diff;
+        });
+        const el = document.getElementById('pnl-val');
+        el.textContent = (pnl >= 0 ? '+$' : '-$') + Math.abs(pnl).toFixed(2);
+        el.style.color = pnl >= 0 ? 'var(--green)' : 'var(--red)';
+    }
+    
+    function updateUI() {
+        document.getElementById('display-balance').textContent = balance.toFixed(2);
+        document.getElementById('active-count').textContent = trades.length;
+    }
+    
+    function toggleTerms(show) {
+        document.getElementById('terms-modal').style.display = show ? 'block' : 'none';
+    }
+    
+    function sendAction(type) {
+        if (type === 'DEPOSIT') {
+            const amt = document.getElementById('kes-dep').value;
+            if (!amt || parseFloat(amt) <= 0) return showToast('ENTER VALID KES AMOUNT');
+            const msg = `*VELO DEPOSIT NOTIFICATION*\n\nAsset: USDT (TRC20)\nAmount: KES ${amt}\nTRON Address: ${TRON_DEPOSIT_ADDRESS}\nStatus: Sent\n\nPlease audit and credit my terminal balance.`;
+            window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`);
+            nextStep(1);
+            document.getElementById('kes-dep').value = '';
+        } else {
+            const amt = document.getElementById('kes-with').value;
+            const addr = document.getElementById('addr-with').value.trim();
+            if (!amt || parseFloat(amt) < 1000) return showToast('MINIMUM WITHDRAWAL IS KES 1,000');
+            if (!addr.startsWith('T') || addr.length !== 34) return showToast('INVALID TRC20 ADDRESS (must start with T, 34 chars)');
+            const msg = `*VELO WITHDRAWAL REQUEST*\n\nAmount: KES ${amt}\nDestination: ${addr}\nNetwork: TRC20`;
             window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`);
         }
-
-        // ── Init ─────────────────────────────────────────────────
+    }
+    
+    // WebSocket price
+    function connectWS() {
+        const ws = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@ticker');
+        ws.onmessage = (e) => {
+            const d = JSON.parse(e.data);
+            const p = parseFloat(d.c);
+            const ch = parseFloat(d.P);
+            const h = parseFloat(d.h);
+            const l = parseFloat(d.l);
+            const v = parseFloat(d.v);
+            if (isNaN(p) || p <= 0) return;
+            const priceEl = document.getElementById('ticker-price');
+            priceEl.textContent = '$' + p.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            priceEl.classList.toggle('up', p > prevPrice);
+            priceEl.classList.toggle('down', p < prevPrice);
+            const chEl = document.getElementById('ticker-change');
+            const pos = ch >= 0;
+            chEl.textContent = (pos ? '+' : '') + ch.toFixed(2) + '%';
+            chEl.className = 'ticker-change ' + (pos ? 'pos' : 'neg');
+            document.getElementById('ticker-high').textContent = '$' + h.toLocaleString('en-US', { maximumFractionDigits: 0 });
+            document.getElementById('ticker-low').textContent = '$' + l.toLocaleString('en-US', { maximumFractionDigits: 0 });
+            document.getElementById('ticker-vol').textContent = (v / 1000).toFixed(1) + 'K';
+            prevPrice = btcPrice;
+            btcPrice = p;
+            updatePnL();
+        };
+        ws.onclose = () => { wsReconnectTimer = setTimeout(connectWS, 3000); };
+        ws.onerror = () => { ws.close(); };
+    }
+    
+    // initial load + DOM ready
+    window.addEventListener('DOMContentLoaded', () => {
         updateUI();
-        if (trades.length) document.getElementById('pnl-val').textContent = 'AWAITING PRICE...';
-    </script>
+        if (trades.length) updatePnL();
+        connectWS();
+        // Generate QR code for TRON address (primary fix)
+        const qrDiv = document.getElementById("dynamic-qr");
+        if (qrDiv) {
+            qrDiv.innerHTML = "";
+            // @ts-ignore
+            new QRCode(qrDiv, {
+                text: TRON_DEPOSIT_ADDRESS,
+                width: 160,
+                height: 160,
+                colorDark: "#000000",
+                colorLight: "#ffffff"
+            });
+        }
+        // set address text inside address box
+        const addrSpan = document.getElementById('tron-address-display');
+        if(addrSpan) addrSpan.innerText = TRON_DEPOSIT_ADDRESS;
+        // ensure deposit is step1 visible
+        nextStep(1);
+    });
+    
+    window.executeTrade = executeTrade;
+    window.switchTab = switchTab;
+    window.nextStep = nextStep;
+    window.copyAddr = copyAddr;
+    window.sendAction = sendAction;
+    window.toggleTerms = toggleTerms;
+    
+    // extra safety: on resize or orientation, QR remains stable but we can recall if needed
+    window.addEventListener('resize', () => {
+        if(document.getElementById('view-deposit').style.display !== 'none') {
+            // soft refresh to prevent canvas distortion (optional)
+            const qrNode = document.getElementById("dynamic-qr");
+            if(qrNode && qrNode.children.length === 0) {
+                // @ts-ignore
+                new QRCode(qrNode, { text: TRON_DEPOSIT_ADDRESS, width: 160, height: 160 });
+            }
+        }
+    });
+</script>
 </body>
-
 </html>
