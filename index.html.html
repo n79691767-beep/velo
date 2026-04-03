@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
     <title>APEX TRADER | Professional Trading Terminal</title>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
-    <!-- QR code library (simple, lightweight, no external images) -->
-    <script src="https://cdn.jsdelivr.net/npm/qrcodejs2-fix@0.0.1/qrcode.min.js"></script>
     <style>
         :root {
             --bg: #050608;
@@ -23,99 +21,20 @@
             --nav-h: 60px;
             --ticker-h: 38px;
         }
-        *, *::before, *::after {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: 'DM Sans', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
-        }
-        nav {
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-            padding: 0 20px;
-            height: var(--nav-h);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 200;
-            flex-shrink: 0;
-        }
-        .logo {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 26px;
-            letter-spacing: 2px;
-            color: var(--gold);
-            line-height: 1;
-        }
-        .logo-sub {
-            font-size: 9px;
-            color: var(--text-dim);
-            letter-spacing: 1px;
-            font-family: 'DM Mono', monospace;
-            display: block;
-        }
-        .vault-display {
-            background: var(--card);
-            border: 1px solid var(--border);
-            padding: 7px 14px;
-            border-radius: 6px;
-            text-align: right;
-        }
-        .vault-label {
-            font-size: 8px;
-            text-transform: uppercase;
-            color: var(--text-dim);
-            letter-spacing: 1px;
-        }
-        .vault-amt {
-            font-family: 'DM Mono', monospace;
-            color: var(--gold);
-            font-size: 16px;
-            font-weight: 500;
-        }
-        .ticker-bar {
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-            height: var(--ticker-h);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 0 16px;
-            flex-shrink: 0;
-        }
-        .ticker-pair {
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--text-dim);
-            letter-spacing: 1px;
-            font-family: 'DM Mono', monospace;
-        }
-        .ticker-price {
-            font-size: 18px;
-            font-weight: 700;
-            font-family: 'DM Mono', monospace;
-            color: var(--text);
-            transition: color 0.3s;
-        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+        nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 20px; height: var(--nav-h); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 200; flex-shrink: 0; }
+        .logo { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 2px; color: var(--gold); line-height: 1; }
+        .logo-sub { font-size: 9px; color: var(--text-dim); letter-spacing: 1px; font-family: 'DM Mono', monospace; display: block; }
+        .vault-display { background: var(--card); border: 1px solid var(--border); padding: 7px 14px; border-radius: 6px; text-align: right; }
+        .vault-label { font-size: 8px; text-transform: uppercase; color: var(--text-dim); letter-spacing: 1px; }
+        .vault-amt { font-family: 'DM Mono', monospace; color: var(--gold); font-size: 16px; font-weight: 500; }
+        .ticker-bar { background: var(--surface); border-bottom: 1px solid var(--border); height: var(--ticker-h); display: flex; align-items: center; gap: 6px; padding: 0 16px; flex-shrink: 0; }
+        .ticker-pair { font-size: 11px; font-weight: 700; color: var(--text-dim); letter-spacing: 1px; font-family: 'DM Mono', monospace; }
+        .ticker-price { font-size: 18px; font-weight: 700; font-family: 'DM Mono', monospace; color: var(--text); transition: color 0.3s; }
         .ticker-price.up { color: var(--green); }
         .ticker-price.down { color: var(--red); }
-        .ticker-change {
-            font-size: 11px;
-            font-family: 'DM Mono', monospace;
-            padding: 2px 7px;
-            border-radius: 3px;
-            font-weight: 600;
-        }
+        .ticker-change { font-size: 11px; font-family: 'DM Mono', monospace; padding: 2px 7px; border-radius: 3px; font-weight: 600; }
         .ticker-change.pos { background: rgba(29, 185, 106, 0.12); color: var(--green); }
         .ticker-change.neg { background: rgba(217, 64, 64, 0.12); color: var(--red); }
         .ticker-extras { margin-left: auto; display: flex; gap: 14px; }
@@ -136,7 +55,7 @@
         .input-group { margin-bottom: 12px; }
         .input-label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 6px; display: block; letter-spacing: 1px; }
         input { width: 100%; background: #050608; border: 1px solid var(--border); padding: 12px; color: #fff; font-family: 'DM Mono', monospace; border-radius: 6px; font-size: 14px; transition: border-color .2s; }
-        input:focus { border-color: var(--gold-dim); }
+        input:focus { border-color: var(--gold-dim); outline: none; }
         .btn { width: 100%; padding: 14px; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; transition: .2s; }
         .btn:hover { filter: brightness(1.1); }
         .btn:active { transform: scale(.98); }
@@ -149,40 +68,28 @@
         .stat-val { font-family: 'DM Mono', monospace; font-weight: 500; }
         .wizard-step { animation: fadeIn .25s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-        .qr-wrapper {
-            background: #ffffff;
-            padding: 12px;
-            border-radius: 16px;
-            width: 180px;
-            margin: 0 auto 18px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        #dynamic-qr img, #dynamic-qr canvas {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            margin: 0 auto;
-        }
-        .address-box {
+        /* M-Pesa number display box */
+        .mpesa-box {
             background: #000;
-            border: 1px dashed var(--gold-dim);
-            padding: 12px;
-            border-radius: 6px;
+            border: 2px solid var(--gold);
+            padding: 18px 12px;
+            border-radius: 8px;
             text-align: center;
             cursor: pointer;
-            margin-bottom: 10px;
-            transition: border-color .2s;
+            margin-bottom: 12px;
+            transition: box-shadow .2s;
         }
-        .address-box:hover { border-color: var(--gold); }
-        .address-text { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gold); word-break: break-all; }
+        .mpesa-box:hover { box-shadow: 0 0 16px rgba(201,168,76,0.25); }
+        .mpesa-box-label { font-size: 8px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+        .mpesa-box-number { font-family: 'DM Mono', monospace; font-size: 24px; font-weight: 700; color: var(--gold); letter-spacing: 3px; }
+        .mpesa-box-hint { font-size: 8px; color: var(--gold-dim); margin-top: 6px; font-weight: 700; letter-spacing: 1px; }
         .info-box { background: rgba(201,168,76,.07); border: 1px solid var(--gold-dim); border-radius: 6px; padding: 10px 12px; font-size: 10px; color: var(--text-dim); line-height: 1.7; margin-bottom: 12px; }
         .info-box b { color: var(--text); }
+        .network-badge { background: #1a2a1a; color: #4caf50; font-size: 9px; padding: 2px 8px; border-radius: 14px; display: inline-block; font-weight: 600; }
         #terms-modal { position: fixed; inset: 0; background: rgba(0,0,0,.95); z-index: 1000; display: none; padding: 40px 20px; overflow-y: auto; }
         .terms-content { max-width: 480px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); padding: 28px; border-radius: 8px; }
         .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); background: var(--gold); color: #000; padding: 11px 22px; border-radius: 4px; font-weight: 700; font-size: 11px; letter-spacing: .5px; z-index: 2000; display: none; box-shadow: 0 10px 40px rgba(0,0,0,.8); white-space: nowrap; }
+        .footer-note { font-size: 8px; text-align: center; color: var(--text-dim); margin-top: 8px; }
         @media (max-width: 768px) {
             body { overflow-y: auto; }
             .main { flex-direction: column; overflow: visible; height: auto; }
@@ -196,21 +103,6 @@
         @media (min-width: 769px) {
             body { height: 100vh; overflow: hidden; }
             .main { height: calc(100vh - var(--nav-h) - var(--ticker-h)); overflow: hidden; }
-        }
-        .network-badge {
-            background: #1e2a1f;
-            color: #8bc34a;
-            font-size: 9px;
-            padding: 2px 8px;
-            border-radius: 14px;
-            display: inline-block;
-            font-weight: 600;
-        }
-        .footer-note {
-            font-size: 8px;
-            text-align: center;
-            color: var(--text-dim);
-            margin-top: 8px;
         }
     </style>
 </head>
@@ -244,6 +136,7 @@
         <iframe src="https://s.tradingview.com/widgetembed/?symbol=BINANCE%3ABTCUSDT&interval=60&theme=dark&style=1&timezone=Etc%2FUTC&locale=en" loading="lazy" allowfullscreen></iframe>
     </div>
     <div class="sidebar">
+
         <div class="section">
             <div class="section-h">Market Execution <span style="color:var(--gold)">10× Leverage</span></div>
             <div class="input-group">
@@ -257,39 +150,37 @@
         </div>
 
         <div class="section">
-            <div class="section-h">Funding & Payouts</div>
+            <div class="section-h">Funding &amp; Payouts</div>
             <div class="tabs">
                 <button class="tab active" id="tab-dep-btn" onclick="switchTab('deposit')">Add Funds</button>
                 <button class="tab" id="tab-with-btn" onclick="switchTab('withdraw')">Withdraw</button>
             </div>
 
-            <!-- DEPOSIT WIZARD with TRON QR code -->
+            <!-- DEPOSIT WIZARD — M-Pesa Pochi la Biashara -->
             <div id="view-deposit">
                 <div id="step-1" class="wizard-step">
-                    <p style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:6px;">STEP 1 — Send USDT (TRC20)</p>
+                    <p style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:6px;">STEP 1 — Send via M-Pesa</p>
                     <p style="font-size:11px;color:var(--text-dim);margin-bottom:10px;line-height:1.6;">
-                        Send <b style="color:var(--text)">USDT</b> from any wallet or exchange to the address below.<br>
-                        <span class="network-badge">TRON NETWORK (TRC20)</span>
+                        Send funds to our <b style="color:var(--text)">Pochi la Biashara</b> number below.<br>
+                        <span class="network-badge">M-PESA · POCHI LA BIASHARA</span>
                     </p>
                     <div class="info-box">
-                        ✔ Use the <b>TRON (TRC20) network</b> — not BEP20, not ERC20<br>
-                        ✔ Send <b>USDT only</b> — minimum deposit: <b>$10 USDT</b><br>
-                        ✔ Funds credited after 1 on-chain confirmation
+                        ✔ Open <b>M-Pesa</b> → <b>Pochi la Biashara</b> → <b>Send Money</b><br>
+                        ✔ Send <b>KES only</b> — minimum deposit: <b>KES 1,500</b><br>
+                        ✔ Balance credited within <b>15–60 minutes</b> after confirmation
                     </div>
-                    <div class="qr-wrapper" id="qr-container">
-                        <div id="dynamic-qr"></div>
-                    </div>
-                    <div class="address-box" onclick="copyAddr()">
-                        <div class="address-text" id="tron-address-display">TWCphpX7xGQ9r5jCiLwcfHeF9skJ8bAZe1</div>
-                        <p style="font-size:8px;color:var(--gold);margin-top:4px;font-weight:700;">TAP TO COPY ADDRESS</p>
+                    <div class="mpesa-box" onclick="copyNumber()">
+                        <div class="mpesa-box-label">Pochi la Biashara Number</div>
+                        <div class="mpesa-box-number">0725 885 304</div>
+                        <div class="mpesa-box-hint">TAP TO COPY NUMBER</div>
                     </div>
                     <button class="btn btn-gold" onclick="nextStep(2)">I HAVE SENT THE MONEY →</button>
                 </div>
 
                 <div id="step-2" class="wizard-step" style="display:none;">
                     <p style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:6px;">STEP 2 — How much did you send?</p>
-                    <p style="font-size:11px;color:var(--text-dim);margin-bottom:12px;">Enter the amount in <b>Kenyan Shillings (KES)</b> that you converted and sent.</p>
-                    <input type="number" id="kes-dep" placeholder="e.g. 5000 (KES)" min="0" style="margin-bottom:12px;" />
+                    <p style="font-size:11px;color:var(--text-dim);margin-bottom:12px;">Enter the amount in <b>Kenyan Shillings (KES)</b> that you sent.</p>
+                    <input type="number" id="kes-dep" placeholder="e.g. 1500 (KES)" min="1500" style="margin-bottom:12px;" />
                     <div style="display:flex;gap:10px;">
                         <button class="btn btn-ghost" onclick="nextStep(1)">← BACK</button>
                         <button class="btn btn-gold" onclick="nextStep(3)">CONTINUE →</button>
@@ -300,7 +191,7 @@
                     <p style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:6px;">STEP 3 — Notify Us</p>
                     <p style="font-size:11px;color:var(--text-dim);margin-bottom:10px;">
                         Tap below to alert our team on WhatsApp.<br>
-                        Your balance will appear within <b>15–60 minutes</b> once confirmed on TRON.
+                        Your balance will appear within <b>15–60 minutes</b> once we confirm the M-Pesa payment.
                     </p>
                     <button class="btn btn-green" onclick="sendAction('DEPOSIT')">NOTIFY US ON WHATSAPP →</button>
                 </div>
@@ -313,8 +204,8 @@
                     <input type="number" id="kes-with" placeholder="Minimum 1,000" min="1000" />
                 </div>
                 <div class="input-group">
-                    <span class="input-label">Your TRC20 Receiving Address</span>
-                    <input type="text" id="addr-with" placeholder="Must start with 'T'" />
+                    <span class="input-label">Your M-Pesa Phone Number</span>
+                    <input type="text" id="addr-with" placeholder="e.g. 0712345678" />
                 </div>
                 <button class="btn btn-gold" onclick="sendAction('WITHDRAW')">Request Payout</button>
             </div>
@@ -326,6 +217,7 @@
             <p style="font-size:10px;color:var(--text-dim);text-align:center;margin-top:16px;text-decoration:underline;cursor:pointer;" onclick="toggleTerms(true)">Legal Disclosures &amp; Terms</p>
             <div class="footer-note">APEX TRADER | apextrade.co.ke</div>
         </div>
+
     </div>
 </div>
 
@@ -333,7 +225,7 @@
     <div class="terms-content">
         <h2 style="font-family:'Bebas Neue';color:var(--gold);margin-bottom:18px;font-size:22px;">APEX TRADER | Terms of Service</h2>
         <div style="font-size:12px;color:var(--text-dim);line-height:1.8;">
-            <p><b>1. Network Policy:</b> APEX TRADER operates exclusively on the <b>TRON (TRC20)</b> network. Deposits sent via ERC20, BEP20, or other chains are non-recoverable.</p><br>
+            <p><b>1. Payment Method:</b> APEX TRADER processes deposits exclusively via <b>M-Pesa Pochi la Biashara</b>. Funds sent via any other channel are non-recoverable.</p><br>
             <p><b>2. Manual Auditing:</b> All deposits and payouts are audited manually. Credits typically reflect within 15–60 minutes.</p><br>
             <p><b>3. Market Risk:</b> Trading involves high leverage (10×). Manage your margin to avoid liquidation.</p><br>
             <p><b>4. Governing Law:</b> All disputes arising from the use of APEX TRADER shall be governed exclusively by the laws of the <b>Republic of Kenya</b>.</p>
@@ -345,70 +237,28 @@
 <div id="toast" class="toast"></div>
 
 <script>
-    // ======================== TRON ADDRESS (MAIN WALLET) ========================
-    const TRON_DEPOSIT_ADDRESS = "TWCphpX7xGQ9r5jCiLwcfHeF9skJ8bAZe1";
-    
-    // State variables
+    const MPESA_NUMBER = "0725885304";
+    const MPESA_DISPLAY = "0725 885 304";
+
     let balance = parseFloat(localStorage.getItem('apex_balance') || '0');
     let trades = JSON.parse(localStorage.getItem('apex_trades') || '[]');
     let btcPrice = 0;
     let prevPrice = 0;
     let wsReconnectTimer = null;
     let toastTimer = null;
-    const phone = '254700000000';  // update to actual WhatsApp number
+    const phone = '254725885304';
 
     function saveState() {
         localStorage.setItem('apex_balance', balance.toFixed(2));
         localStorage.setItem('apex_trades', JSON.stringify(trades));
     }
 
-    // QR CODE generation with actual TRON address
-    function generateTronQR() {
-        const qrContainer = document.getElementById("dynamic-qr");
-        if (!qrContainer) return;
-        qrContainer.innerHTML = "";
-        try {
-            // @ts-ignore
-            new QRCode(qrContainer, {
-                text: TRON_DEPOSIT_ADDRESS,
-                width: 160,
-                height: 160,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.M
-            });
-        } catch(e) {
-            console.warn("QR fallback", e);
-            qrContainer.innerHTML = `<div style="background:#fff; padding:8px; border-radius:12px; text-align:center; color:#000; font-size:9px;">⚠️ QR Code<br>${TRON_DEPOSIT_ADDRESS.slice(0,10)}...</div>`;
-        }
+    function copyNumber() {
+        navigator.clipboard.writeText(MPESA_NUMBER)
+            .then(() => showToast('✅ NUMBER COPIED: ' + MPESA_DISPLAY))
+            .catch(() => showToast('⚠️ MANUAL COPY: ' + MPESA_DISPLAY));
     }
-    
-    function refreshDepositQR() {
-        const step1 = document.getElementById('step-1');
-        if (step1 && step1.style.display !== 'none') {
-            const qrDiv = document.getElementById("dynamic-qr");
-            if (qrDiv) {
-                qrDiv.innerHTML = "";
-                try {
-                    // @ts-ignore
-                    new QRCode(qrDiv, {
-                        text: TRON_DEPOSIT_ADDRESS,
-                        width: 160,
-                        height: 160,
-                        colorDark: "#000000",
-                        colorLight: "#ffffff"
-                    });
-                } catch(e) { console.error(e); }
-            }
-        }
-    }
-    
-    function copyAddr() {
-        navigator.clipboard.writeText(TRON_DEPOSIT_ADDRESS)
-            .then(() => showToast('✅ TRON ADDRESS COPIED'))
-            .catch(() => showToast('⚠️ MANUAL COPY: ' + TRON_DEPOSIT_ADDRESS));
-    }
-    
+
     function showToast(msg) {
         const t = document.getElementById('toast');
         t.textContent = msg;
@@ -416,16 +266,13 @@
         clearTimeout(toastTimer);
         toastTimer = setTimeout(() => t.style.display = 'none', 3000);
     }
-    
+
     function nextStep(n) {
         document.querySelectorAll('#view-deposit .wizard-step').forEach(s => s.style.display = 'none');
         const target = document.getElementById('step-' + n);
         if (target) target.style.display = 'block';
-        if (n === 1) {
-            setTimeout(() => refreshDepositQR(), 30);
-        }
     }
-    
+
     function switchTab(type) {
         const depositDiv = document.getElementById('view-deposit');
         const withdrawDiv = document.getElementById('view-withdraw');
@@ -437,20 +284,6 @@
             depBtn.classList.add('active');
             withBtn.classList.remove('active');
             nextStep(1);
-            setTimeout(() => {
-                const qrContainer = document.getElementById("dynamic-qr");
-                if (qrContainer) {
-                    qrContainer.innerHTML = "";
-                    // @ts-ignore
-                    new QRCode(qrContainer, {
-                        text: TRON_DEPOSIT_ADDRESS,
-                        width: 160,
-                        height: 160,
-                        colorDark: "#000000",
-                        colorLight: "#ffffff"
-                    });
-                }
-            }, 20);
         } else {
             depositDiv.style.display = 'none';
             withdrawDiv.style.display = 'block';
@@ -458,7 +291,7 @@
             depBtn.classList.remove('active');
         }
     }
-    
+
     function executeTrade(side) {
         if (!btcPrice || btcPrice <= 0) return showToast('⛔ WAITING FOR LIVE PRICE');
         const margin = parseFloat(document.getElementById('trade-amount').value);
@@ -469,18 +302,18 @@
         saveState();
         updateUI();
         updatePnL();
-        showToast(`${side.toUpperCase()} POSITION OPENED | ${margin} USDT margin`);
+        showToast(side.toUpperCase() + ' POSITION OPENED | ' + margin + ' USDT margin');
         document.getElementById('trade-amount').value = '';
     }
-    
+
     function updatePnL() {
         if (!btcPrice || trades.length === 0) {
-            if(trades.length) document.getElementById('pnl-val').textContent = 'AWAITING PRICE...';
+            if (trades.length) document.getElementById('pnl-val').textContent = 'AWAITING PRICE...';
             else document.getElementById('pnl-val').textContent = '$0.00';
             return;
         }
         let pnl = 0;
-        trades.forEach(t => {
+        trades.forEach(function(t) {
             if (!t.entry || t.entry <= 0) return;
             const diff = (btcPrice - t.entry) / t.entry;
             pnl += t.side === 'Long' ? t.size * diff : t.size * -diff;
@@ -489,38 +322,37 @@
         el.textContent = (pnl >= 0 ? '+$' : '-$') + Math.abs(pnl).toFixed(2);
         el.style.color = pnl >= 0 ? 'var(--green)' : 'var(--red)';
     }
-    
+
     function updateUI() {
         document.getElementById('display-balance').textContent = balance.toFixed(2);
         document.getElementById('active-count').textContent = trades.length;
     }
-    
+
     function toggleTerms(show) {
         document.getElementById('terms-modal').style.display = show ? 'block' : 'none';
     }
-    
+
     function sendAction(type) {
         if (type === 'DEPOSIT') {
             const amt = document.getElementById('kes-dep').value;
-            if (!amt || parseFloat(amt) <= 0) return showToast('ENTER VALID KES AMOUNT');
-            const msg = `*APEX TRADER DEPOSIT NOTIFICATION*\n\nAsset: USDT (TRC20)\nAmount: KES ${amt}\nTRON Address: ${TRON_DEPOSIT_ADDRESS}\nStatus: Sent\n\nPlease audit and credit my terminal balance.`;
-            window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`);
+            if (!amt || parseFloat(amt) < 1500) return showToast('MINIMUM DEPOSIT IS KES 1,500');
+            const msg = '*APEX TRADER DEPOSIT NOTIFICATION*\n\nPayment Method: M-Pesa Pochi la Biashara\nAmount Sent: KES ' + amt + '\nPochi Number: ' + MPESA_DISPLAY + '\nStatus: Sent\n\nPlease audit and credit my terminal balance.';
+            window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(msg));
             nextStep(1);
             document.getElementById('kes-dep').value = '';
         } else {
             const amt = document.getElementById('kes-with').value;
-            const addr = document.getElementById('addr-with').value.trim();
+            const mpesaNum = document.getElementById('addr-with').value.trim();
             if (!amt || parseFloat(amt) < 1000) return showToast('MINIMUM WITHDRAWAL IS KES 1,000');
-            if (!addr.startsWith('T') || addr.length !== 34) return showToast('INVALID TRC20 ADDRESS (must start with T, 34 chars)');
-            const msg = `*APEX TRADER WITHDRAWAL REQUEST*\n\nAmount: KES ${amt}\nDestination: ${addr}\nNetwork: TRC20`;
-            window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`);
+            if (!mpesaNum || mpesaNum.length < 10) return showToast('ENTER A VALID M-PESA NUMBER');
+            const msg = '*APEX TRADER WITHDRAWAL REQUEST*\n\nAmount: KES ' + amt + '\nM-Pesa Number: ' + mpesaNum + '\nMethod: M-Pesa';
+            window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(msg));
         }
     }
-    
-    // WebSocket price feed
+
     function connectWS() {
         const ws = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@ticker');
-        ws.onmessage = (e) => {
+        ws.onmessage = function(e) {
             const d = JSON.parse(e.data);
             const p = parseFloat(d.c);
             const ch = parseFloat(d.P);
@@ -543,50 +375,23 @@
             btcPrice = p;
             updatePnL();
         };
-        ws.onclose = () => { wsReconnectTimer = setTimeout(connectWS, 3000); };
-        ws.onerror = () => { ws.close(); };
+        ws.onclose = function() { wsReconnectTimer = setTimeout(connectWS, 3000); };
+        ws.onerror = function() { ws.close(); };
     }
-    
-    // DOM ready initialization
-    window.addEventListener('DOMContentLoaded', () => {
+
+    window.addEventListener('DOMContentLoaded', function() {
         updateUI();
         if (trades.length) updatePnL();
         connectWS();
-        const qrDiv = document.getElementById("dynamic-qr");
-        if (qrDiv) {
-            qrDiv.innerHTML = "";
-            // @ts-ignore
-            new QRCode(qrDiv, {
-                text: TRON_DEPOSIT_ADDRESS,
-                width: 160,
-                height: 160,
-                colorDark: "#000000",
-                colorLight: "#ffffff"
-            });
-        }
-        const addrSpan = document.getElementById('tron-address-display');
-        if(addrSpan) addrSpan.innerText = TRON_DEPOSIT_ADDRESS;
         nextStep(1);
     });
-    
-    // Expose global functions
+
     window.executeTrade = executeTrade;
     window.switchTab = switchTab;
     window.nextStep = nextStep;
-    window.copyAddr = copyAddr;
+    window.copyNumber = copyNumber;
     window.sendAction = sendAction;
     window.toggleTerms = toggleTerms;
-    
-    // Refresh QR on resize for safety
-    window.addEventListener('resize', () => {
-        if(document.getElementById('view-deposit').style.display !== 'none') {
-            const qrNode = document.getElementById("dynamic-qr");
-            if(qrNode && qrNode.children.length === 0) {
-                // @ts-ignore
-                new QRCode(qrNode, { text: TRON_DEPOSIT_ADDRESS, width: 160, height: 160 });
-            }
-        }
-    });
 </script>
 </body>
 </html>
